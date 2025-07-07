@@ -14,9 +14,9 @@ import { useToast } from "@/hooks/use-toast";
 import { projectPictureMap } from "@/lib/projectPictureMap";
 
 // Import demo videos
-import demoVideo from "@/assets/movies/demo-video.mp4";
-import robotArmDemo from "@/assets/movies/robot-arm-demo.mp4";
-import droneInspection from "@/assets/movies/drone-inspection.mp4";
+import demoVideo from "@/assets/project_movies/demo-video.mp4";
+import robotArmDemo from "@/assets/project_movies/robot-arm-demo.mp4";
+import droneInspection from "@/assets/project_movies/drone-inspection.mp4";
 
 /**
  * Helper to get asset URL by filename (from DB)
