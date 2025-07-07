@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/Navbar";
 import { HeroSection } from "@/components/sections/HeroSection";
+import { SkillsSection } from "@/components/sections/SkillsSection";
 
 const Index = () => {
   return (

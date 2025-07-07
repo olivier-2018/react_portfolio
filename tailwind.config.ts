@@ -61,20 +61,20 @@ const config: Config = {
       },
       backgroundImage: {
         "gradient-primary": "var(--gradient-primary)",
-        "gradient-secondary": "var(--gradient-secondary)", 
+        "gradient-secondary": "var(--gradient-secondary)",
         "gradient-accent": "var(--gradient-accent)",
         "gradient-hero": "var(--gradient-hero)",
         "gradient-card": "var(--gradient-card)",
       },
       boxShadow: {
-        "primary": "var(--shadow-primary)",
-        "secondary": "var(--shadow-secondary)", 
-        "glow": "var(--shadow-glow)",
-        "card": "var(--shadow-card)",
+        primary: "var(--shadow-primary)",
+        secondary: "var(--shadow-secondary)",
+        glow: "var(--shadow-glow)",
+        card: "var(--shadow-card)",
       },
       transitionProperty: {
-        "smooth": "var(--transition-smooth)",
-        "spring": "var(--transition-spring)",
+        smooth: "var(--transition-smooth)",
+        spring: "var(--transition-spring)",
       },
       keyframes: {
         "accordion-down": {
@@ -88,57 +88,57 @@ const config: Config = {
         "fade-in": {
           "0%": {
             opacity: "0",
-            transform: "translateY(10px)"
+            transform: "translateY(10px)",
           },
           "100%": {
             opacity: "1",
-            transform: "translateY(0)"
-          }
+            transform: "translateY(0)",
+          },
         },
         "fade-in-up": {
           "0%": {
             opacity: "0",
-            transform: "translateY(20px)"
+            transform: "translateY(20px)",
           },
           "100%": {
             opacity: "1",
-            transform: "translateY(0)"
-          }
+            transform: "translateY(0)",
+          },
         },
         "scale-in": {
           "0%": {
             transform: "scale(0.95)",
-            opacity: "0"
+            opacity: "0",
           },
           "100%": {
             transform: "scale(1)",
-            opacity: "1"
-          }
+            opacity: "1",
+          },
         },
         "slide-in-left": {
           "0%": { transform: "translateX(-20px)", opacity: "0" },
-          "100%": { transform: "translateX(0)", opacity: "1" }
+          "100%": { transform: "translateX(0)", opacity: "1" },
         },
         "slide-in-right": {
           "0%": { transform: "translateX(20px)", opacity: "0" },
-          "100%": { transform: "translateX(0)", opacity: "1" }
+          "100%": { transform: "translateX(0)", opacity: "1" },
         },
-        "float": {
+        float: {
           "0%, 100%": { transform: "translateY(0px)" },
-          "50%": { transform: "translateY(-10px)" }
+          "50%": { transform: "translateY(-10px)" },
         },
         "pulse-glow": {
           "0%, 100%": { boxShadow: "var(--shadow-glow)" },
-          "50%": { boxShadow: "0 0 60px hsl(var(--primary-glow) / 0.6)" }
+          "50%": { boxShadow: "0 0 60px hsl(var(--primary-glow) / 0.6)" },
         },
         "scroll-left": {
           "0%": { transform: "translateX(0)" },
-          "100%": { transform: "translateX(-100%)" }
+          "100%": { transform: "translateX(-100%)" },
         },
         "scroll-right": {
           "0%": { transform: "translateX(-100%)" },
-          "100%": { transform: "translateX(0)" }
-        }
+          "100%": { transform: "translateX(0)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -148,10 +148,12 @@ const config: Config = {
         "scale-in": "scale-in 0.4s ease-out",
         "slide-in-left": "slide-in-left 0.6s ease-out",
         "slide-in-right": "slide-in-right 0.6s ease-out",
-        "float": "float 3s ease-in-out infinite",
+        float: "float 3s ease-in-out infinite",
         "pulse-glow": "pulse-glow 3s ease-in-out infinite",
-        "scroll-left": "scroll-left var(--scroll-duration, 30s) linear infinite",
-        "scroll-right": "scroll-right var(--scroll-duration, 30s) linear infinite",
+        "scroll-left":
+          "scroll-left var(--scroll-duration, 30s) linear infinite",
+        "scroll-right":
+          "scroll-right var(--scroll-duration, 30s) linear infinite",
       },
     },
   },
