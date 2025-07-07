@@ -9,6 +9,9 @@ const Index = () => {
         <div id="home">
           <HeroSection />
         </div>
+        <div id="skills">
+          <SkillsSection />
+        </div>
       </main>
     </div>
   );
