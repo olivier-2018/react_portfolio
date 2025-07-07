@@ -1,6 +1,8 @@
 # Environmental variables
 .env
-assets/
+
+# projects asset data
+project_*
 
 # Logs
 logs

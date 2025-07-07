@@ -11,40 +11,34 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
+import { projectPictureMap } from "@/lib/projectPictureMap";
 
 // Import demo videos
 import demoVideo from "@/assets/movies/demo-video.mp4";
 import robotArmDemo from "@/assets/movies/robot-arm-demo.mp4";
 import droneInspection from "@/assets/movies/drone-inspection.mp4";
 
-// Import project images
-import analyticsImage from "@/assets/analytics-dashboard.jpg";
-import customerSegImage from "@/assets/customer-segmentation.jpg";
-import cadOptimizerImage from "@/assets/cad-optimizer.jpg";
-import navRobotImage from "@/assets/nav-robot.jpg";
-import visionDroneImage from "@/assets/vision-drone.jpg";
-
 /**
- * Image mapping for project cards
- * Maps database image filenames to imported assets
+ * Helper to get asset URL by filename (from DB)
  */
-const imageMap: Record<string, string> = {
-  "analytics-dashboard.jpg": analyticsImage,
-  "customer-segmentation.jpg": customerSegImage,
-  "cad-optimizer.jpg": cadOptimizerImage,
-  "nav-robot.jpg": navRobotImage,
-  "vision-drone.jpg": visionDroneImage,
+const getProjectPictureUrl = (filename?: string) => {
+  console.log(`getProjectPictureUrl fcn - filename: ${filename} `); // Debug log
+  // if (!filename) return undefined;
+  // Debug: log available keys
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`filename: ${filename} keys: ${Object.keys(projectPictureMap)}`);
+    console.log('--> projectPictureMap:', projectPictureMap[filename]);
+  }
+  // Direct match only (e.g. 'analytics-dashboard.jpg')
+  return projectPictureMap[filename];
 };
 
-/**
- * Video mapping for project demos
- * Maps video filenames to imported video assets
- */
 const videoMap: Record<string, string> = {
-  "demo-video.mp4": demoVideo,
-  "robot-arm-demo.mp4": robotArmDemo,
-  "drone-inspection.mp4": droneInspection,
+  'demo-video.mp4': demoVideo,
+  'robot-arm-demo.mp4': robotArmDemo,
+  'drone-inspection.mp4': droneInspection,
 };
+
 
 /**
  * Video popup component for displaying project demos
@@ -137,6 +131,7 @@ function ProjectCard({ project }: { project: any }) {
 
   const handleImageClick = () => {
     if (project.website_url && isVideoFile(project.website_url)) {
+      // const videoSrc = getAssetUrl(project.website_url);
       const videoSrc = videoMap[project.website_url];
       if (videoSrc) {
         setVideoPopup({
@@ -151,12 +146,13 @@ function ProjectCard({ project }: { project: any }) {
   };
 
   const projectImage = project.image_filename
-    ? imageMap[project.image_filename]
+    ? getProjectPictureUrl(project.image_filename)
     : null;
   const hasVideo =
     project.website_url &&
     isVideoFile(project.website_url) &&
     videoMap[project.website_url];
+    // getAssetUrl(project.website_url);
 
   return (
     <>
