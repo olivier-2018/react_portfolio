@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
-// import heroPortrait from "@/assets/hero-portrait.jpg";
-import heroPortrait from "@/assets/hero001_mod.png";
+import heroPortrait from "@/assets/hero-portrait.png";
 
 /**
  * Hero section component with animated introduction
