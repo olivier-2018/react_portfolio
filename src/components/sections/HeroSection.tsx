@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
-import heroPortrait from "@/assets/hero-portrait.jpg";
+// import heroPortrait from "@/assets/hero-portrait.jpg";
+import heroPortrait from "@/assets/hero001_mod.png";
 
 /**
  * Hero section component with animated introduction
@@ -57,7 +58,7 @@ export function HeroSection() {
                 Hello, I'm
               </span>
               <br />
-              <span className="text-primary">John Developer</span>
+              <span className="text-primary">Olivier !</span>
             </h1>
 
             <p className="text-xl lg:text-2xl text-primary-foreground mb-8 max-w-2xl font-medium">

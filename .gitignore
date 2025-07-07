@@ -1,5 +1,6 @@
 # Environmental variables
 .env
+assets/
 
 # Logs
 logs
@@ -26,3 +27,4 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+*.obsolete
