@@ -12,6 +12,11 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 
+// Import demo videos
+import demoVideo from "@/assets/movies/demo-video.mp4";
+import robotArmDemo from "@/assets/movies/robot-arm-demo.mp4";
+import droneInspection from "@/assets/movies/drone-inspection.mp4";
+
 // Import project images
 import analyticsImage from "@/assets/analytics-dashboard.jpg";
 import customerSegImage from "@/assets/customer-segmentation.jpg";
