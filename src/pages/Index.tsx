@@ -1,10 +1,15 @@
 import { Navbar } from "@/components/Navbar";
+import { HeroSection } from "@/components/sections/HeroSection";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <main>My website</main>
+      <main>
+        <div id="home">
+          <HeroSection />
+        </div>
+      </main>
     </div>
   );
 };
