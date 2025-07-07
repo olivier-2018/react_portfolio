@@ -38,7 +38,7 @@ npm install
 npm run dev
 ```
 
-The app will be available at [http://localhost:8080](http://localhost:8080) by default.
+The app will be available at [http://localhost:5173](http://localhost:5173) by default.
 
 ---
 

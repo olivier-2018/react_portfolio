@@ -1,35 +1,34 @@
-import { useState, useEffect } from 'react';
-import { ExternalLink, Github, Heart, Play, X } from 'lucide-react';
-import { useProjectCategories, useProjectsByCategory, useLikeProject } from '@/hooks/useProjects';
-import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { useToast } from '@/hooks/use-toast';
+import { useState, useEffect } from "react";
+import { ExternalLink, Github, Heart, Play, X } from "lucide-react";
+import {
+  useProjectCategories,
+  useProjectsByCategory,
+  useLikeProject,
+} from "@/hooks/useProjects";
+import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
 
 // Import project images
-import analyticsImage from '@/assets/analytics-dashboard.jpg';
-import customerSegImage from '@/assets/customer-segmentation.jpg';
-import cadOptimizerImage from '@/assets/cad-optimizer.jpg';
-import navRobotImage from '@/assets/nav-robot.jpg';
-import visionDroneImage from '@/assets/vision-drone.jpg';
-
-// Import demo videos
-import demoVideo from '@/assets/movies/demo-video.mp4';
-import robotArmDemo from '@/assets/movies/robot-arm-demo.mp4';
-import droneInspection from '@/assets/movies/drone-inspection.mp4';
+import analyticsImage from "@/assets/analytics-dashboard.jpg";
+import customerSegImage from "@/assets/customer-segmentation.jpg";
+import cadOptimizerImage from "@/assets/cad-optimizer.jpg";
+import navRobotImage from "@/assets/nav-robot.jpg";
+import visionDroneImage from "@/assets/vision-drone.jpg";
 
 /**
  * Image mapping for project cards
  * Maps database image filenames to imported assets
  */
 const imageMap: Record<string, string> = {
-  'analytics-dashboard.jpg': analyticsImage,
-  'customer-segmentation.jpg': customerSegImage,
-  'cad-optimizer.jpg': cadOptimizerImage,
-  'nav-robot.jpg': navRobotImage,
-  'vision-drone.jpg': visionDroneImage,
+  "analytics-dashboard.jpg": analyticsImage,
+  "customer-segmentation.jpg": customerSegImage,
+  "cad-optimizer.jpg": cadOptimizerImage,
+  "nav-robot.jpg": navRobotImage,
+  "vision-drone.jpg": visionDroneImage,
 };
 
 /**
@@ -37,15 +36,20 @@ const imageMap: Record<string, string> = {
  * Maps video filenames to imported video assets
  */
 const videoMap: Record<string, string> = {
-  'demo-video.mp4': demoVideo,
-  'robot-arm-demo.mp4': robotArmDemo,
-  'drone-inspection.mp4': droneInspection,
+  "demo-video.mp4": demoVideo,
+  "robot-arm-demo.mp4": robotArmDemo,
+  "drone-inspection.mp4": droneInspection,
 };
 
 /**
  * Video popup component for displaying project demos
  */
-function VideoPopup({ videoSrc, isOpen, onClose, title }: {
+function VideoPopup({
+  videoSrc,
+  isOpen,
+  onClose,
+  title,
+}: {
   videoSrc: string;
   isOpen: boolean;
   onClose: () => void;
@@ -69,7 +73,7 @@ function VideoPopup({ videoSrc, isOpen, onClose, title }: {
             autoPlay
             loop
             className="w-full h-auto rounded-lg"
-            style={{ maxHeight: '80vh' }}
+            style={{ maxHeight: "80vh" }}
           >
             <source src={videoSrc} type="video/mp4" />
             Your browser does not support the video tag.
@@ -90,10 +94,14 @@ function VideoPopup({ videoSrc, isOpen, onClose, title }: {
 function ProjectCard({ project }: { project: any }) {
   const likeProject = useLikeProject();
   const { toast } = useToast();
-  const [videoPopup, setVideoPopup] = useState<{ isOpen: boolean; videoSrc: string; title: string }>({
+  const [videoPopup, setVideoPopup] = useState<{
+    isOpen: boolean;
+    videoSrc: string;
+    title: string;
+  }>({
     isOpen: false,
-    videoSrc: '',
-    title: ''
+    videoSrc: "",
+    title: "",
   });
 
   const handleLike = async () => {
@@ -113,13 +121,13 @@ function ProjectCard({ project }: { project: any }) {
   };
 
   const openLink = (url: string) => {
-    window.open(url, '_blank', 'noopener,noreferrer');
+    window.open(url, "_blank", "noopener,noreferrer");
   };
 
   const isVideoFile = (filename: string) => {
     if (!filename) return false;
-    const videoExtensions = ['.mp4', '.webm', '.ogv'];
-    return videoExtensions.some(ext => filename.toLowerCase().endsWith(ext));
+    const videoExtensions = [".mp4", ".webm", ".ogv"];
+    return videoExtensions.some((ext) => filename.toLowerCase().endsWith(ext));
   };
 
   const handleImageClick = () => {
@@ -129,7 +137,7 @@ function ProjectCard({ project }: { project: any }) {
         setVideoPopup({
           isOpen: true,
           videoSrc,
-          title: project.title
+          title: project.title,
         });
       }
     } else if (project.website_url) {
@@ -137,14 +145,22 @@ function ProjectCard({ project }: { project: any }) {
     }
   };
 
-  const projectImage = project.image_filename ? imageMap[project.image_filename] : null;
-  const hasVideo = project.website_url && isVideoFile(project.website_url) && videoMap[project.website_url];
+  const projectImage = project.image_filename
+    ? imageMap[project.image_filename]
+    : null;
+  const hasVideo =
+    project.website_url &&
+    isVideoFile(project.website_url) &&
+    videoMap[project.website_url];
 
   return (
     <>
       <Card className="group overflow-hidden bg-gradient-card border-primary/20 hover:border-primary/40 transition-all duration-300 transform hover:scale-105 hover:shadow-primary">
         {/* Project Image */}
-        <div className="relative h-48 overflow-hidden cursor-pointer" onClick={handleImageClick}>
+        <div
+          className="relative h-48 overflow-hidden cursor-pointer"
+          onClick={handleImageClick}
+        >
           {projectImage ? (
             <>
               <img
@@ -153,7 +169,7 @@ function ProjectCard({ project }: { project: any }) {
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
-                  target.style.display = 'none';
+                  target.style.display = "none";
                 }}
               />
               {hasVideo && (
@@ -169,7 +185,7 @@ function ProjectCard({ project }: { project: any }) {
               <span className="text-white font-semibold">No Image</span>
             </div>
           )}
-          
+
           {/* Overlay with action button */}
           {!hasVideo && (
             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
@@ -256,7 +272,9 @@ function ProjectCard({ project }: { project: any }) {
       <VideoPopup
         videoSrc={videoPopup.videoSrc}
         isOpen={videoPopup.isOpen}
-        onClose={() => setVideoPopup({ isOpen: false, videoSrc: '', title: '' })}
+        onClose={() =>
+          setVideoPopup({ isOpen: false, videoSrc: "", title: "" })
+        }
         title={videoPopup.title}
       />
     </>
@@ -269,7 +287,7 @@ function ProjectCard({ project }: { project: any }) {
  */
 export function ProjectsSection() {
   const { data: categories } = useProjectCategories();
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
   const { data: projects, isLoading } = useProjectsByCategory(selectedCategory);
   const { ref, isIntersecting } = useIntersectionObserver();
   const [forceVisible, setForceVisible] = useState(false);
@@ -289,9 +307,11 @@ export function ProjectsSection() {
     <section id="projects" ref={ref} className="py-20 bg-background">
       <div className="container mx-auto px-6">
         {/* Section Header */}
-        <div 
+        <div
           className={`text-center mb-16 transition-all duration-1000 ${
-            isIntersecting || forceVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+            isIntersecting || forceVisible
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 translate-y-10"
           }`}
         >
           <h2 className="text-4xl lg:text-5xl font-bold mb-6">
@@ -300,26 +320,29 @@ export function ProjectsSection() {
             </span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Explore my latest work across different domains of technology and innovation
+            Explore my latest work across different domains of technology and
+            innovation
           </p>
         </div>
 
         {/* Category Filters */}
         {categories && categories.length > 0 && (
-          <div 
+          <div
             className={`flex flex-wrap justify-center gap-4 mb-12 transition-all duration-1000 delay-300 ${
-              isIntersecting || forceVisible ? 'opacity-100' : 'opacity-0'
+              isIntersecting || forceVisible ? "opacity-100" : "opacity-0"
             }`}
           >
             {categories.map((category) => (
               <Button
                 key={category.id}
-                variant={selectedCategory === category.id ? "default" : "outline"}
+                variant={
+                  selectedCategory === category.id ? "default" : "outline"
+                }
                 onClick={() => setSelectedCategory(category.id)}
                 className={`transition-all duration-300 transform hover:scale-105 ${
                   selectedCategory === category.id
-                    ? 'bg-gradient-primary shadow-primary'
-                    : 'hover:border-primary/50 hover:text-primary'
+                    ? "bg-gradient-primary shadow-primary"
+                    : "hover:border-primary/50 hover:text-primary"
                 }`}
               >
                 {category.label}
@@ -343,9 +366,11 @@ export function ProjectsSection() {
             ))}
           </div>
         ) : projects && projects.length > 0 ? (
-          <div 
+          <div
             className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 transition-all duration-1000 delay-500 ${
-              isIntersecting || forceVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+              isIntersecting || forceVisible
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-10"
             }`}
           >
             {projects.map((project, index) => (
@@ -360,7 +385,9 @@ export function ProjectsSection() {
           </div>
         ) : (
           <div className="text-center py-12">
-            <p className="text-muted-foreground">No projects found for this category.</p>
+            <p className="text-muted-foreground">
+              No projects found for this category.
+            </p>
           </div>
         )}
       </div>
