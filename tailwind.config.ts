@@ -34,6 +34,10 @@ const config: Config = {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
         },
+        ternary: {
+          DEFAULT: "hsl(var(--ternary))",
+          foreground: "hsl(var(--ternary-foreground))",
+        },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
@@ -63,6 +67,11 @@ const config: Config = {
       backgroundImage: {
         "gradient-primary": "var(--gradient-primary)",
         "gradient-secondary": "var(--gradient-secondary)",
+        "gradient-word1": "var(--gradient-word1)",
+        "gradient-word2": "var(--gradient-word2)",
+        "gradient-word3": "var(--gradient-word3)",
+        "gradient-word4": "var(--gradient-word4)",
+        "gradient-word5": "var(--gradient-word5)",
         "gradient-accent": "var(--gradient-accent)",
         "gradient-hero": "var(--gradient-hero)",
         "gradient-card": "var(--gradient-card)",
