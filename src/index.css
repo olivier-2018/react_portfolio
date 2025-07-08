@@ -31,6 +31,11 @@
     --secondary: 270 75% 60%;
     --secondary-foreground: 230 35% 7%;
 
+    /* third colors - elegant purple - used in HeroSection.tsx gradients */
+    --ternary: hsl(352, 59%, 48%);
+    --ternary-foreground: hsl(83, 71%, 38%);
+    --ternary-glow: hsl(273, 94%, 50%);
+
     /* Muted elements - used for backgrounds and disabled states */
     --muted: 230 25% 15%;
     --muted-foreground: 215 16% 47%;

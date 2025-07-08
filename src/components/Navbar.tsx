@@ -2,6 +2,9 @@
 import { useState, useEffect } from 'react';
 import { Menu, X, Github, Linkedin, Mail, Youtube } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ImageModal } from '@/components/ui/imageModal';
+import myLogo from '@/assets/logo-BTS.png'; // Adjust the import path as necessary
+
 
 /**
  * Responsive navigation bar component
@@ -10,6 +13,9 @@ import { Button } from '@/components/ui/button';
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isModalOpen, setModalOpen] = useState(false);
+  const handleOpen = () => setModalOpen(true);
+  const handleClose = () => setModalOpen(false);
 
   // Handle scroll effect for navbar background
   useEffect(() => {
@@ -30,6 +36,7 @@ export function Navbar() {
     setIsMenuOpen(false);
   };
 
+  // Navigation items
   const navItems = [
     { id: 'home', label: 'Home' },
     { id: 'skills', label: 'Skills' },
@@ -38,6 +45,7 @@ export function Navbar() {
     { id: 'contact', label: 'Contact' },
   ];
 
+  // Social links
   const socialLinks = [
     {
       icon: Github,
@@ -73,8 +81,18 @@ export function Navbar() {
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Logo/Brand */}
-          <div className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+          {/* <div className="text-2xl font-bold bg-gradient-ternary bg-clip-text text-transparent">
             Portfolio
+          </div> */}
+
+          <div  className="flex items-center justify-between px-4 py-0" >
+            <img  
+              src={myLogo}  
+              alt="Logo" 
+              className="h-8 w-auto sm:h-10 md:h-12 lg:h-14" 
+              onClick={handleOpen}
+            />
+            <ImageModal isOpen={isModalOpen} imageSrc={myLogo}  onClose={handleClose} />
           </div>
 
           {/* Desktop Navigation */}

@@ -27,7 +27,7 @@ export function HeroSection() {
     <section
       id="home"
       ref={ref}
-      className="min-h-screen flex items-center justify-center relative overflow-hidden bg-gradient-hero"
+      className="relative min-h-screen flex items-center justify-center  overflow-hidden bg-gradient-hero"
     >
       {/* Background decoration */}
       <div className="absolute inset-0 opacity-20">
@@ -54,10 +54,10 @@ export function HeroSection() {
           >
             <h1 className="text-5xl lg:text-7xl font-bold mb-6 leading-tight">
               <span className="bg-gradient-primary bg-clip-text text-transparent">
-                Hello, I'm
+                Hello, I'm 
               </span>
-              <br />
-              <span className="text-primary">Olivier !</span>
+              {/* <br /> */}
+              <span className="text-primary-glow"> Oli !</span>
             </h1>
 
             <p className="text-xl lg:text-2xl text-primary-foreground mb-8 max-w-2xl font-medium">
@@ -127,17 +127,19 @@ export function HeroSection() {
 
         {/* Scroll indicator */}
         <div
-          className={`absolute bottom-8 left-1/2 transform -translate-x-1/2 transition-all duration-1000 delay-1000 ${
+          className={`absolute  bottom-1 left-1/2 transform -translate-x-1/2 transition-all duration-1000 delay-1000 ${
             isIntersecting || forceVisible ? "opacity-100" : "opacity-0"
           }`}
         >
+
           <button
             onClick={scrollToSkills}
-            className="flex flex-col items-center text-muted-foreground hover:text-primary transition-colors duration-300 group"
+            className="flex flex-col  items-center text-pink-950 hover:text-rose-500 transition-colors duration-300 group"
           >
-            <span className="text-sm mb-2">Scroll to explore</span>
-            <ChevronDown className="w-6 h-6 animate-bounce group-hover:text-primary" />
+            <span className="text-xl mb-2">Scroll to explore</span>
+            <ChevronDown className="w-6 h-6 animate-bounce group-hover:text-ternary" />
           </button>
+
         </div>
       </div>
     </section>
