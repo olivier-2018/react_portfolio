@@ -4,6 +4,10 @@
 # projects asset data
 project_*
 
+# Dev resources
+db_*/
+docker-compose_postgres.yml
+
 # Logs
 logs
 *.log

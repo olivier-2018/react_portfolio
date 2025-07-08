@@ -24,3 +24,40 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
     autoRefreshToken: true,
   },
 });
+
+// Fetch all projects
+export const fetchProjects = async (categoryId) => {
+  let query = supabase.from("projects").select("*");
+  if (categoryId) query = query.eq("category_id", categoryId);
+  const { data, error } = await query;
+  if (error) throw error;
+  return data;
+};
+
+// Fetch all skills
+export const fetchSkills = async () => {
+  const { data, error } = await supabase.from("skills").select("*");
+  if (error) throw error;
+  return data;
+};
+
+// Fetch all categories
+export const fetchCategories = async () => {
+  const { data, error } = await supabase.from("categories").select("*");
+  if (error) throw error;
+  return data;
+};
+
+// Fetch all skill categories
+export const fetchSkillCategories = async () => {
+  const { data, error } = await supabase.from("skill_categories").select("*");
+  if (error) throw error;
+  return data;
+};
+
+// Fetch all feedback entries
+export const fetchFeedbacks = async () => {
+  const { data, error } = await supabase.from("customer_feedbacks").select("*");
+  if (error) throw error;
+  return data;
+};
