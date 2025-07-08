@@ -54,9 +54,9 @@ export function ContactSection() {
       }
 
       // EmailJS configuration - these would normally be environment variables
-      const serviceId = 'your_service_id';
-      const templateId = 'your_template_id';
-      const publicKey = 'your_public_key';
+      const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+      const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+      const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
       const templateParams = {
         from_name: `${emailFormData.firstName} ${emailFormData.lastName}`,
@@ -212,7 +212,7 @@ export function ContactSection() {
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Email</p>
-                      <p className="font-medium text-foreground">john.developer@email.com</p>
+                      <p className="font-medium text-foreground">brontechsolutions@protonmail.com</p>
                     </div>
                   </div>
 
@@ -224,7 +224,7 @@ export function ContactSection() {
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Phone</p>
-                      <p className="font-medium text-foreground">+1 (555) 123-4567</p>
+                      <p className="font-medium text-foreground">+41 79 xxx xxxx</p>
                     </div>
                   </div>
 
@@ -237,7 +237,7 @@ export function ContactSection() {
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Location</p>
-                      <p className="font-medium text-foreground">San Francisco, CA</p>
+                      <p className="font-medium text-foreground">Switzerland, AG</p>
                     </div>
                   </div>
                 </div>

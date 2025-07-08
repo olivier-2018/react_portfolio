@@ -49,17 +49,17 @@ export function Navbar() {
   const socialLinks = [
     {
       icon: Github,
-      href: 'https://github.com',
+      href: 'https://github.com/olivier-2018',
       label: 'GitHub',
     },
     {
       icon: Linkedin,
-      href: 'https://linkedin.com',
+      href: 'https://www.linkedin.com/in/olivier-abc',
       label: 'LinkedIn',
     },
     {
       icon: Youtube,
-      href: 'https://youtube.com',
+      href: 'https://www.youtube.com/@bigtechfan-AI',
       label: 'YouTube',
     },
     {
@@ -101,7 +101,7 @@ export function Navbar() {
               <button
                 key={item.id}
                 onClick={() => scrollToSection(item.id)}
-                className="text-foreground hover:text-primary transition-colors duration-200 font-medium relative group"
+                className="text-foreground hover:text-primary transition-colors duration-200 text-lg relative group"
               >
                 {item.label}
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full" />
