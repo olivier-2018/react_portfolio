@@ -42,11 +42,12 @@ export function HeroSection() {
         />
       </div>
 
-      <div className="container mx-auto px-6 py-20 relative z-10">
+      {/* <div className="container mx-auto px-6 py-20 relative z-10"> */}
+      <div className="w-full max-w-screen-2xl mx-auto px-6 py-20 relative z-10">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
           {/* Text Content */}
           <div
-            className={`flex-1 text-center lg:text-left transition-all duration-1000 ${
+            className={`lg:w-2/3 text-center lg:text-left transition-all duration-1000 ${
               isIntersecting || forceVisible
                 ? "opacity-100 translate-y-0"
                 : "opacity-0 translate-y-10"
@@ -54,22 +55,35 @@ export function HeroSection() {
           >
             <h1 className="text-5xl lg:text-7xl font-bold mb-6 leading-tight">
               <span className="bg-gradient-primary bg-clip-text text-transparent">
-                Hello, I'm 
+                Hey, I'm 
               </span>
               {/* <br /> */}
               <span className="text-primary-glow"> Oli !</span>
             </h1>
 
-            <p className="text-xl lg:text-2xl text-primary-foreground mb-8 max-w-2xl font-medium">
-              Passionate full-stack developer specializing in{" "}
-              <span className="text-primary font-semibold">React</span>,{" "}
-              <span className="text-secondary font-semibold">
-                Machine Learning
-              </span>
-              , and <span className="text-accent font-semibold">Robotics</span>.
-              I create innovative solutions that bridge technology and
-              creativity.
+            <p className="text-xl lg:text-2xl text-primary-foreground mb-8 font-medium">
+              I'm a {" "}
+              <span className="bg-gradient-word1 font-semibold bg-clip-text text-transparent">data scientist</span>{" "}
+              , {" "} 
+              <span className="bg-gradient-word2 font-semibold bg-clip-text text-transparent">mechanical engineer</span>{" "}
+              , {" "} 
+              <span className="bg-gradient-word3 font-semibold bg-clip-text text-transparent">aerodynamicist</span>{" "}
+              and {" "} 
+              <span className="bg-gradient-word4 font-semibold bg-clip-text text-transparent">robotics enthusiast</span>.{" "}
             </p>
+
+            <p className="text-xl lg:text-2xl text-primary-foreground mb-8  font-medium">
+              My interests range from computer vision, autonomous robotics, deep / machine learning, mechatronics, digital electronics to aerospace and astrophysics.
+            </p>
+              
+            {/* <p className="text-xl lg:text-3xl text-primary-foreground mb-8 font-medium">
+              I create innovative solutions that bridge technology and creativity.
+            </p> */}
+            <p className="text-xl lg:text-2xl text-primary-foreground mb-8 font-medium">
+              Welcome to my portfolio. 
+              <br />
+              Feel free to explore my work and connect with me.
+            </p>            
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Button
@@ -97,7 +111,7 @@ export function HeroSection() {
 
           {/* Profile Image */}
           <div
-            className={`flex-1 flex justify-center lg:justify-end transition-all duration-1000 delay-300 ${
+            className={`lg:w-1/3 flex justify-center lg:justify-end transition-all duration-1000 delay-300 ${
               isIntersecting || forceVisible
                 ? "opacity-100 scale-100"
                 : "opacity-0 scale-90"
@@ -107,7 +121,7 @@ export function HeroSection() {
               <div className="w-80 h-80 lg:w-96 lg:h-96 rounded-full overflow-hidden shadow-glow animate-pulse-glow border-4 border-primary/30">
                 <img
                   src={heroPortrait}
-                  alt="John Developer - Full Stack Developer"
+                  alt="Olivier - Data scientist, Mechanical Engineer, Robotics Enthusiast"
                   className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500"
                 />
               </div>

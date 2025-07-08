@@ -32,9 +32,9 @@
     --secondary-foreground: 230 35% 7%;
 
     /* third colors - elegant purple - used in HeroSection.tsx gradients */
-    --ternary: hsl(352, 59%, 48%);
-    --ternary-foreground: hsl(83, 71%, 38%);
-    --ternary-glow: hsl(273, 94%, 50%);
+    --ternary: hsl(128, 100%, 26%);
+    --ternary-foreground: hsl(295, 94%, 14%);
+    --ternary-glow: hsl(337, 83%, 32%);
 
     /* Muted elements - used for backgrounds and disabled states */
     --muted: 230 25% 15%;
@@ -66,6 +66,31 @@
       135deg,
       hsl(var(--secondary)),
       hsl(270 75% 70%)
+    );
+    --gradient-word1: linear-gradient(
+      20deg,
+      hsl(244, 100%, 80%),
+      hsl(241, 73%, 28%)
+    );
+    --gradient-word2: linear-gradient(
+      20deg,
+      hsl(325, 100%, 72%),
+      hsl(0, 98%, 21%)
+    );
+    --gradient-word3: linear-gradient(
+      20deg,
+      hsl(150, 100%, 50%),
+      hsl(323, 92%, 25%)
+    );
+    --gradient-word4: linear-gradient(
+      20deg,
+      hsl(39, 100%, 64%),
+      hsl(239, 85%, 26%)
+    );
+    --gradient-word5: linear-gradient(
+      90deg,
+      hsl(244, 100%, 50%),
+      hsl(0, 100%, 50%)
     );
     --gradient-accent: linear-gradient(
       135deg,
