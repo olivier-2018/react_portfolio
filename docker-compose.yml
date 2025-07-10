@@ -25,5 +25,5 @@ networks:
   net_portfolio:
     name: net_portfolio
     driver: bridge
-    internal: false
+    external: true
 

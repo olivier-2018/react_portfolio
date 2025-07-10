@@ -46,8 +46,8 @@ The app will be available at [http://localhost:5173](http://localhost:5173) by d
 ```sh
 docker build -t react_portfolio:latest .
 
-docker network  create react_portfolio
-docker run -it --rm -p "5173:5173" --network react_portfolio react_portfolio:latest
+docker network create net_portfolio
+docker run -it --rm -p "5173:5173" --network net_portfolio react_portfolio:latest
 ```
 
 **alternative:** Use docker compose file
@@ -57,7 +57,7 @@ docker compose -f docker-compose.yaml up -d
 
 **optional:** postgres deployment with Docker
 ```sh
-docker compose -f docker-compose_postgres.yaml up -d
+docker compose -f docker-compose_postgres.yml up -d
 ```
 
 ---
