@@ -2,7 +2,7 @@
 .env
 
 # projects asset data
-project_*
+projects_assets/
 
 # Dev resources
 db_*/

@@ -36,21 +36,29 @@ npm install
 
 # 4. Start the development server
 npm run dev
+
 ```
-
 The app will be available at [http://localhost:5173](http://localhost:5173) by default.
-
 ---
 
-## Editing & Deployment
+## Docker Deployment
 
-- **Edit Locally:** Use your favorite IDE, then push changes to GitHub.
-- **Edit in GitHub:** Use the GitHub web editor or Codespaces for cloud-based development.
+```sh
+docker build -t react_portfolio:latest .
 
-### Deployment
+docker network  create react_portfolio
+docker run -it --rm -p "5173:5173" --network react_portfolio react_portfolio:latest
+```
 
-- Deploy with Docker.
-- Deploy directly on VPS using nginx (not included in repo)
+**alternative:** Use docker compose file
+```sh
+docker compose -f docker-compose.yaml up -d
+```
+
+**optional:** postgres deployment with Docker
+```sh
+docker compose -f docker-compose_postgres.yaml up -d
+```
 
 ---
 

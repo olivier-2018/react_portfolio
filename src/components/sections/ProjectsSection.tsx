@@ -15,16 +15,6 @@ import { projectPictureMap } from "@/lib/projectPictureMap";
 import { projectVideoMap } from "@/lib/projectVideoMap";
 
 
-// Import demo videos
-// import demoVideo from "@/assets/project_movies/demo-video.mp4";
-// import robotArmDemo from "@/assets/project_movies/robot-arm-demo.mp4";
-// import droneInspection from "@/assets/project_movies/drone-inspection.mp4";
-// const videoMap: Record<string, string> = {
-//   'demo-video.mp4': demoVideo,
-//   'robot-arm-demo.mp4': robotArmDemo,
-//   'drone-inspection.mp4': droneInspection,
-// };
-
 /**
  * Helper to get project pictures asset URL by filename (from DB)
  */

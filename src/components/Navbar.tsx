@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { Menu, X, Github, Linkedin, Mail, Youtube } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ImageModal } from '@/components/ui/imageModal';
-import myLogo from '@/assets/logo-BTS.png'; // Adjust the import path as necessary
+import myLogo from '@/assets/logo-BTS.gif'; // Adjust the import path as necessary
 
 
 /**

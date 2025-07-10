@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: react_portfolio:latest
+    container_name: react_portfolio
+    restart: unless-stopped
+    networks: ['net_portfolio']
+    ports:
+      - "8080:5173"
+    volumes:
+      - ./projects_assets:/projects_assets
+    environment:
+      VITE_EMAILJS_SERVICE_ID: ${VITE_EMAILJS_SERVICE_ID}
+      VITE_EMAILJS_TEMPLATE_ID: ${VITE_EMAILJS_TEMPLATE_ID}
+      VITE_EMAILJS_PUBLIC_KEY: ${VITE_EMAILJS_PUBLIC_KEY}
+      VITE_DB_SELECT: ${VITE_DB_SELECT}
+      VITE_SUPABASE_URL: ${VITE_SUPABASE_URL}
+      VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY}
+      VITE_POSTGRES_USER: ${VITE_POSTGRES_USER}
+      VITE_POSTGRES_PASSWORD: ${VITE_POSTGRES_PASSWORD}
+      VITE_POSTGRES_DB: ${VITE_POSTGRES_DB}
+
+networks:
+  net_portfolio:
+    name: net_portfolio
+    driver: bridge
+    internal: false
+
