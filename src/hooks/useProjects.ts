@@ -1,23 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/services/supabaseClient';
+import { Project, ProjectCategory } from '@/services/types';
 
-export interface Project {
-  id: string;
-  title: string;
-  description: string;
-  skills: string[];
-  github_url?: string;
-  website_url?: string;
-  image_filename?: string;
-  likes_count: number;
-  category_id: string;
-}
-
-export interface ProjectCategory {
-  id: string;
-  name: string;
-  label: string;
-}
 
 /**
  * Hook to fetch all project categories from Supabase
@@ -31,7 +15,7 @@ export function useProjectCategories() {
       let query = supabase
         .from('project_categories')
         .select('*')
-        .order('label');
+        .order('name');
 
       const { data, error } = await query;
       
@@ -54,15 +38,15 @@ export function useProjectsByCategory(categoryId?: string) {
   return useQuery({
     queryKey: ['projects', categoryId],
     queryFn: async () => {
-      console.log('Fetching projects by categoryID from Supabase...', {categoryId});
+      console.log('Fetching projects by categoryID...', {categoryId});
 
       let query = supabase
         .from('projects')
         .select('*')
-        .order('likes_count', { ascending: false });
+        .order('likes_count', { ascending: true });
 
       if (categoryId) {
-        query = query.eq('category_id', categoryId);
+        query = query.eq('category', categoryId);
       }
 
       const { data, error } = await query;
@@ -86,12 +70,12 @@ export function useLikeProject() {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async (projectId: string) => {
+    mutationFn: async (projectName: string) => {
       // First get current likes count
       const { data: project, error: fetchError } = await supabase
         .from('projects')
         .select('likes_count')
-        .eq('id', projectId)
+        .eq('name', projectName)
         .single();
 
       if (fetchError) {
@@ -105,7 +89,7 @@ export function useLikeProject() {
       const { data, error } = await supabase
         .from('projects')
         .update({ likes_count: project.likes_count + 1 })
-        .eq('id', projectId)
+        .eq('name', projectName)
         .select()
         .single();
 

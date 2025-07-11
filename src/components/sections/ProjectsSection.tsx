@@ -99,13 +99,15 @@ function ProjectCard({ project }: { project: any }) {
     videoSrc: "",
     title: "",
   });
+  // Add state for skills popup
+  const [skillsPopupOpen, setSkillsPopupOpen] = useState(false);
 
   const handleLike = async () => {
     try {
-      await likeProject.mutateAsync(project.id);
+      await likeProject.mutateAsync(project.name);
       toast({
-        title: "Project Liked!",
-        description: `You liked "${project.title}"`,
+        title: `You Liked Project "${project.name}".`,
+        description: `Leave a feedback down below !!`,
       });
     } catch (error) {
       toast({
@@ -129,12 +131,11 @@ function ProjectCard({ project }: { project: any }) {
   const handleImageClick = () => {
     if (project.website_url && isVideoFile(project.website_url)) {
       const videoSrc = getProjectVideoUrl(project.website_url);
-      // const videoSrc = videoMap[project.website_url];
       if (videoSrc) {
         setVideoPopup({
           isOpen: true,
           videoSrc,
-          title: project.title,
+          title: project.name,
         });
       }
     } else if (project.website_url) {
@@ -162,7 +163,7 @@ function ProjectCard({ project }: { project: any }) {
             <>
               <img
                 src={projectImage}
-                alt={project.title}
+                alt={project.name}
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
@@ -203,26 +204,51 @@ function ProjectCard({ project }: { project: any }) {
         <div className="p-6 space-y-4">
           {/* Skills Used */}
           <div className="flex flex-wrap gap-2">
-            {project.skills.slice(0, 3).map((skill: string) => (
+            {project.skills_list.slice(0, 3).map((skill: string) => (
               <Badge key={skill} variant="secondary" className="text-xs">
                 {skill}
               </Badge>
             ))}
-            {project.skills.length > 3 && (
-              <Badge variant="outline" className="text-xs">
-                +{project.skills.length - 3} more
+            {project.skills_list.length > 3 && (
+              <Badge
+                variant="outline"
+                className="text-xs cursor-pointer"
+                onClick={() => setSkillsPopupOpen(true)}
+              >
+                +{project.skills_list.length - 3} more
               </Badge>
             )}
           </div>
 
+          {/* Skills Popup */}
+          {skillsPopupOpen && (
+            <Dialog open={skillsPopupOpen} onOpenChange={setSkillsPopupOpen}>
+              <DialogContent className="max-w-xs w-full p-4">
+                <h4 className="text-lg font-semibold mb-2">All Skills</h4>
+                <div className="flex flex-wrap gap-2">
+                  {project.skills_list.map((skill: string) => (
+                    <Badge key={skill} variant="secondary" className="text-xs">
+                      {skill}
+                    </Badge>
+                  ))}
+                </div>
+                <div className="mt-4 text-right">
+                  <Button size="sm" variant="outline" onClick={() => setSkillsPopupOpen(false)}>
+                    Close
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+          )}
+
           {/* Project Title */}
           <h3 className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors duration-300">
-            {project.title}
+            {project.name}
           </h3>
 
           {/* Project Description */}
           <p className="text-muted-foreground text-sm line-clamp-3">
-            {project.description}
+            {project.project_description}
           </p>
 
           {/* Project Links and Like Button */}
@@ -296,9 +322,11 @@ export function ProjectsSection() {
   }, [isLoading]);
 
   // Set initial category when categories load
+  useEffect(() => {
   if (categories && categories.length > 0 && !selectedCategory) {
-    setSelectedCategory(categories[0].id);
+    setSelectedCategory(categories[0].name);
   }
+}, [categories, selectedCategory]);
 
   return (
     <section id="projects" ref={ref} className="py-20 bg-background">
@@ -331,18 +359,18 @@ export function ProjectsSection() {
           >
             {categories.map((category) => (
               <Button
-                key={category.id}
+                key={category.name}
                 variant={
-                  selectedCategory === category.id ? "default" : "outline"
+                  selectedCategory === category.name ? "default" : "outline"
                 }
-                onClick={() => setSelectedCategory(category.id)}
+                onClick={() => setSelectedCategory(category.name)}
                 className={`transition-all duration-300 transform hover:scale-105 ${
-                  selectedCategory === category.id
+                  selectedCategory === category.name
                     ? "bg-gradient-primary shadow-primary"
                     : "hover:border-primary/50 hover:text-primary"
                 }`}
               >
-                {category.label}
+                {category.name}
               </Button>
             ))}
           </div>
@@ -372,7 +400,7 @@ export function ProjectsSection() {
           >
             {projects.map((project, index) => (
               <div
-                key={project.id}
+                key={project.name}
                 className="animate-scale-in"
                 style={{ animationDelay: `${index * 100}ms` }}
               >

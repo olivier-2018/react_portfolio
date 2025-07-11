@@ -3,22 +3,15 @@ import * as localApi from './localApi';
 
 const dbSelect = import.meta.env.VITE_DB_SELECT || 'supabase';
 
-export const fetchProjects = (...args: any[]) =>
-  dbSelect === 'postgres'
-    ? localApi.fetchProjects(...args)
-    : supabaseApi.fetchProjects(...args);
+let api: typeof supabaseApi | typeof localApi;
+if (dbSelect === 'postgres') {
+  api = localApi;
+} else {
+  api = supabaseApi;
+}
 
-export const fetchCategories = (...args: any[]) =>
-  dbSelect === 'postgres'
-    ? localApi.fetchCategories(...args)
-    : supabaseApi.fetchCategories(...args);
+export const fetchProjects = api.fetchProjects;
+export const fetchCategories = api.fetchCategories;
+export const fetchSkills = api.fetchSkills;
+export const fetchSkillCategories = api.fetchSkillCategories;
 
-export const fetchSkills = (...args: any[]) =>
-  dbSelect === 'postgres'
-    ? localApi.fetchSkills(...args)
-    : supabaseApi.fetchSkills(...args);
-
-export const fetchSkillCategories = (...args: any[]) =>
-  dbSelect === 'postgres'
-    ? localApi.fetchSkillCategories(...args)
-    : supabaseApi.fetchSkillCategories(...args);

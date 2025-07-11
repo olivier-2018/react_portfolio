@@ -1,4 +1,3 @@
-// src/services/localApi.ts
 // API calls to local Postgres container via local Express server
 
 const API_URL = 'http://localhost:3001/api';

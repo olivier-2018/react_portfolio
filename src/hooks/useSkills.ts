@@ -1,19 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/services/supabaseClient';
+import { Skill } from '@/services/types';
 
-export interface Skill {
-  id: string;
-  name: string;
-  mastery_level: number;
-  skill_category: string;
-  icon?: string;
-}
-
-/**
- * Hook to fetch all skills from Supabase
- * Returns skills ordered by mastery level (highest first)
- * Can be filtered by category
- */
 export function useSkills(category?: string) {
   return useQuery({
     queryKey: ['skills', category],
@@ -26,7 +14,7 @@ export function useSkills(category?: string) {
       
       // filter by category if provided
       if (category && category !== 'All') {
-        query = query.eq('skill_category', category);        
+        query = query.eq('category', category);        
         console.log('Fetching skills by category: ', category);
       }
       else {

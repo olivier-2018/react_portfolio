@@ -23,11 +23,11 @@ const ToastViewport = React.forwardRef<
 ToastViewport.displayName = ToastPrimitives.Viewport.displayName
 
 const toastVariants = cva(
-  "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full",
+  "group pointer-events-auto relative inline-flex items-start rounded-md border p-6 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full",
   {
     variants: {
       variant: {
-        default: "border bg-background text-foreground",
+        default: "border bg-green-600 text-white", // success toast is green
         destructive:
           "destructive group border-destructive bg-destructive text-destructive-foreground",
       },
@@ -42,11 +42,25 @@ const Toast = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Root>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root> &
     VariantProps<typeof toastVariants>
->(({ className, variant, ...props }, ref) => {
+>(({ className, variant, style, ...props }, ref) => {
+  // Dynamically set minWidth based on title length if title is present
+  let minWidth = undefined
+  if (props.children) {
+    // Find ToastTitle among children
+    const titleChild = React.Children.toArray(props.children).find(
+      (child: React.ReactElement) => child?.type?.displayName === "ToastTitle"
+    )
+    if (titleChild && titleChild.props?.children) {
+      const titleLength = String(titleChild.props.children).length
+      // Calculate minWidth: 8px per character, min 160px, max 420px
+      minWidth = Math.max(160, Math.min(420, titleLength * 8))
+    }
+  }
   return (
     <ToastPrimitives.Root
       ref={ref}
-      className={cn(toastVariants({ variant }), className)}
+      className={cn(toastVariants({ variant }), className, "inline-block")}
+      style={{ minWidth, maxWidth: 420, ...style }}
       {...props}
     />
   )
@@ -100,13 +114,16 @@ ToastTitle.displayName = ToastPrimitives.Title.displayName
 
 const ToastDescription = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Description>,
-  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Description>
->(({ className, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Description> & { html?: string }
+>(({ className, html, children, ...props }, ref) => (
   <ToastPrimitives.Description
     ref={ref}
     className={cn("text-sm opacity-90", className)}
     {...props}
-  />
+    {...(html ? { dangerouslySetInnerHTML: { __html: html } } : {})}
+  >
+    {!html && children}
+  </ToastPrimitives.Description>
 ))
 ToastDescription.displayName = ToastPrimitives.Description.displayName
 

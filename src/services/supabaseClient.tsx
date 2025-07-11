@@ -25,32 +25,35 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   },
 });
 
-// Fetch all projects
-export const fetchProjects = async (categoryId) => {
+// Fetch project categories
+export const fetchCategories = async () => {
+  const { data, error } = await supabase.from("project_categories").select("*");
+  if (error) throw error;
+  return data;
+};
+
+// Fetch projects
+export const fetchProjects = async (category?: string) => {
   let query = supabase.from("projects").select("*");
-  if (categoryId) query = query.eq("category_id", categoryId);
+  if (category) query = query.eq("category", category);
   const { data, error } = await query;
   if (error) throw error;
   return data;
 };
 
-// Fetch all skills
-export const fetchSkills = async () => {
-  const { data, error } = await supabase.from("skills").select("*");
-  if (error) throw error;
-  return data;
-};
-
-// Fetch all categories
-export const fetchCategories = async () => {
-  const { data, error } = await supabase.from("categories").select("*");
-  if (error) throw error;
-  return data;
-};
-
-// Fetch all skill categories
+// Fetch skill categories
 export const fetchSkillCategories = async () => {
   const { data, error } = await supabase.from("skill_categories").select("*");
+  if (error) throw error;
+  return data;
+};
+
+// Fetch skills
+export const fetchSkills = async (category?: string) => {
+  let query = supabase.from("skills").select("*");
+  if (category) query = query.eq("category", category);
+
+  const { data, error } = await query;
   if (error) throw error;
   return data;
 };

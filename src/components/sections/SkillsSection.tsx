@@ -113,20 +113,6 @@ export function SkillsSection() {
     return ['All', ...(categories || [])].map(cat => String(cat));
   }, [categories, categoriesLoading]);
 
-  // Debug logs for mapping keys
-  // console.log('DEBUG Categories:', allCategories);
-  // console.log('DEBUG Skills:', skills);
-
-  // Calculate initial visibility without waiting for intersection
-  // const [forceVisible, setForceVisible] = useState(false);
-  // useEffect(() => {
-  //   // Force visibility after a short delay if data is loaded
-  //   if (skills && skills.length > 0 && !isLoading) {
-  //     const timer = setTimeout(() => setForceVisible(true), 500);
-  //     return () => clearTimeout(timer);
-  //   }
-  // }, [skills, isLoading]);
-
   // Memoize duplicated skills with optimized calculation
   const duplicatedSkills = useMemo(() => {
     if (!skills || skills.length === 0) return [];
@@ -257,7 +243,7 @@ export function SkillsSection() {
             }`}
             style={{
               width: `${duplicatedSkills.length * 280}px`,
-              animationDuration: '25s',
+              animationDuration: `${duplicatedSkills.length * 0.5}s`,
             }}
           >
             {duplicatedSkills.map((skill, index) => (
