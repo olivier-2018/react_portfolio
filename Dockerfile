@@ -1,33 +1,18 @@
-# Use Node.js 22 Alpine as base image for smaller size
-FROM node:22-alpine
-
-# Create app directory
+# Stage 1: Build the Vite app
+FROM node:22-alpine AS builder
 WORKDIR /app
-
-# Copy package files
+# RUN addgroup -S goldogroup && adduser -S goldorak -G goldogroup \
+#     && chown -R goldorak:goldogroup /app
+# USER goldorak
 COPY package*.json ./
-
-# Create a non-root user and set permissions
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup \
-    && chown -R appuser:appgroup /app
-
-# Switch to non-root user
-USER appuser
-
-# Install dependencies
 RUN npm install 
-#ci --only=production
-
-# Copy source code
-COPY . .
-
-# Build the application
+COPY . . 
 RUN npm run build
 
-# Expose port
+# Stage 2: Serve with Node + a lightweight static server
+FROM node:22-alpine
+WORKDIR /app
+RUN npm install -g serve
+COPY --from=builder /app/dist ./dist
 EXPOSE 5173
-
-# Set default command
-# CMD ["npm", "run", "preview", "--", "--host"]
-CMD ["npm", "run", "build"]
-
+CMD ["serve", "-s", "dist", "-l", "5173"]

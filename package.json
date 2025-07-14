@@ -1,6 +1,7 @@
 {
   "name": "vite_react_ts_portfolio",
   "private": true,
+  "homepage": "/",
   "version": "22.17.0",
   "type": "module",
   "scripts": {

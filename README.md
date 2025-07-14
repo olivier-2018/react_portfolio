@@ -47,7 +47,7 @@ The app will be available at [http://localhost:5173](http://localhost:5173) by d
 docker build -t react_portfolio:latest .
 
 docker network create net_portfolio
-docker run -it --rm -p "5173:5173" --network net_portfolio react_portfolio:latest
+docker run -it --rm -p "5173:5173" --network net_portfolio --name react_portfolio react_portfolio:latest
 ```
 
 **alternative:** Use docker compose file
