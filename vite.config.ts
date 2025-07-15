@@ -4,7 +4,7 @@ import path from "path";
 
 export default defineConfig(({ mode }) => ({
   base: "/", // Set base path for production
-  publicDir: '/public', // Specify the public directory for static assets
+  // publicDir: '/', // Specify the public directory for static assets
   server: { // server block only used in Development mode
     host: true,
     strictPort: true, // Ensure the server uses the specified port
