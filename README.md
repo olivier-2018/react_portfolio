@@ -71,3 +71,7 @@ docker compose -f docker-compose_postgres.yml up -d
 - shadcn-ui
 
 ---
+
+## TODOs:
+
+- implement dynamic server for local postgres queries and optimization of static content serving 

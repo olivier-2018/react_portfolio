@@ -1,3 +1,4 @@
+// Dynamically import all project card movies from the assets/projectVideoAssets folder
 const projectVideoAssets = import.meta.glob('@/assets/project_movies/*.{mp4,webm,ogv}', { eager: true, query: '?url', import: 'default' });
 
 export const projectVideoMap: Record<string, string> = {};

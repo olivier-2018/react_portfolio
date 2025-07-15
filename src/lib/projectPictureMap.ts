@@ -1,6 +1,4 @@
-// src/lib/projectPictureMap.ts
 // Dynamically import all project card images from the assets/project_pictures folder
-
 const projectPictureAssets = import.meta.glob('@/assets/project_pictures/*.{jpg,png,jpeg}', { eager: true, query: '?url', import: 'default' });
 
 export const projectPictureMap: Record<string, string> = {};

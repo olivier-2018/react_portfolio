@@ -247,11 +247,13 @@ export function ContactSection() {
                 </div>
 
                 <div className="mt-8 p-6 rounded-lg bg-gradient-to-r from-primary/20 to-secondary/20 border border-primary/20">
-                  <h4 className="font-bold text-foreground mb-2">Let's Connect</h4>
+                  <h4 className="font-bold text-foreground mb-2">
+                    {activeTab === 'email' ? 'Let\'s Connect' : 'Write me a feedback'}
+                  </h4>
                   <p className="text-sm text-muted-foreground leading-relaxed">
                     {activeTab === 'email' 
                       ? "I'm always interested in new opportunities and interesting projects. Whether you have a specific project in mind or just want to connect, feel free to reach out!"
-                      : "Your feedback helps us deliver better services and improve our client experience."
+                      : "Nothing better than a nice feedback to keep the motivation high !"
                     }
                   </p>
                 </div>
