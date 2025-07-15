@@ -7,8 +7,9 @@ services:
     ports:
       - "5173:5173"
     volumes:
-      - ./projects_assets/project_movies:/app/src/assets/project_movies
-      - ./projects_assets/project_pictures:/app/src/assets/project_pictures
+      - ./projects_assets:/app/src/assets
+      # - ./projects_assets/project_movies:/app/src/assets/project_movies
+      # - ./projects_assets/project_pictures:/app/src/assets/project_pictures
     environment:
       VITE_EMAILJS_SERVICE_ID: ${VITE_EMAILJS_SERVICE_ID}
       VITE_EMAILJS_TEMPLATE_ID: ${VITE_EMAILJS_TEMPLATE_ID}
