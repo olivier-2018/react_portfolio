@@ -3,7 +3,7 @@ services:
     image: react_portfolio:latest
     container_name: react_portfolio
     restart: unless-stopped
-    networks: ['net_portfolio']
+    networks: ['contado_net']
     ports:
       - "5173:5173"
     volumes:
@@ -20,8 +20,8 @@ services:
       VITE_POSTGRES_DB: ${VITE_POSTGRES_DB}
 
 networks:
-  net_portfolio:
-    name: net_portfolio
+  contado_net:
+    name: contado_net
     driver: bridge
     external: true
 
