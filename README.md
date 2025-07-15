@@ -27,14 +27,19 @@ This website is a modern, interactive portfolio designed to showcase your techni
 ```sh
 # 1. Clone the repository
 git clone git@github.com:olivier-2018/react_portfolio.git
+git lfs fetch --all && git lfs checkout
 
 # 2. Navigate to the project directory
 cd react_portfolio
 
-# 3. Install dependencies
+# 3. Install node.js
+nvm install v22
+nvm use lts/jod 
+
+# 4. Install package dependencies
 npm install
 
-# 4. Start the development server
+# 5. Start the development server
 npm run dev
 
 ```
