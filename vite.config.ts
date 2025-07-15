@@ -10,7 +10,8 @@ export default defineConfig(({ mode }) => ({
     port: 5173,
     watch: {
       usePolling: true, // Use polling 'true' for file watching in Docker (while developing in container)
-    },
+    },  
+    allowedHosts: ['.brontechsolutions.ch']
   },
   preview: {
     port: 5173 // Pick your port here
