@@ -1,8 +1,8 @@
 # Environmental variables
-#.env
+.env
 
 # projects asset data
-projects_assets/
+project_*/
 
 # Dev resources
 db_*/
