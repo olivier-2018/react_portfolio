@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import emailjs from '@emailjs/browser';
 import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 import { useSubmitCustomerFeedback } from '@/hooks/useCustomerFeedbacks';
@@ -39,6 +40,7 @@ export function ContactSection() {
   const [forceVisible, setForceVisible] = useState(false);
   const { toast } = useToast();
   const submitFeedbackMutation = useSubmitCustomerFeedback();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     setForceVisible(true); // Set immediately on mount
@@ -118,12 +120,10 @@ export function ContactSection() {
 
     try {
       await submitFeedbackMutation.mutateAsync(feedbackFormData);
-      
       toast({
         title: "Feedback submitted successfully!",
         description: "Thank you for your valuable feedback.",
       });
-
       // Reset form
       setFeedbackFormData({
         first_name: '',
@@ -132,6 +132,10 @@ export function ContactSection() {
         message: '',
         rating: 0,
       });
+      // Add 2 seconds delay before reloading feedbacks
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: ['customer-feedbacks'] });
+      }, 2000);
     } catch (error) {
       console.error('Feedback submission error:', error);
       toast({

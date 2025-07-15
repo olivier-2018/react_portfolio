@@ -4,6 +4,7 @@ import { useSkillCategories } from '@/hooks/useSkillCategories';
 import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { useWindowSize } from '@/lib/utils';
 
 /**
  * Circular progress component for skill mastery visualization
@@ -62,29 +63,6 @@ function CircularProgress({ value, size = 120 }: { value: number; size?: number 
   );
 }
 
-// Custom hook for window size
-function useWindowSize() {
-  const [windowSize, setWindowSize] = useState({
-    width: typeof window !== 'undefined' ? window.innerWidth : 1200,
-    height: typeof window !== 'undefined' ? window.innerHeight : 800,
-  });
-
-  useEffect(() => {
-    function handleResize() {
-      setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-    }
-
-    if (typeof window !== 'undefined') {
-      window.addEventListener('resize', handleResize);
-      return () => window.removeEventListener('resize', handleResize);
-    }
-  }, []);
-
-  return windowSize;
-}
 
 /**
  * Skills section with category filtering and constant speed scrolling
@@ -99,6 +77,7 @@ export function SkillsSection() {
   const { ref, isIntersecting } = useIntersectionObserver();
   const [forceVisible, setForceVisible] = useState(false);
 
+  const cardWidth = 280; // width of each skill card including gap
   const isLoading = categoriesLoading || skillsLoading;
 
   useEffect(() => {
@@ -117,10 +96,9 @@ export function SkillsSection() {
   const duplicatedSkills = useMemo(() => {
     if (!skills || skills.length === 0) return [];
     
-    const cardWidth = 280; // width of each skill card including gap
     const minCardsNeeded = Math.ceil(windowWidth / cardWidth) + 2;
     const duplications = Math.max(2, Math.ceil(minCardsNeeded / skills.length));
-    
+    console.log(`Duplicating skills: ${duplications} times for ${skills.length} cards`);
     // Optimize array creation for better performance
     const duplicated = new Array(duplications * skills.length);
     for (let i = 0; i < duplications; i++) {
@@ -132,6 +110,7 @@ export function SkillsSection() {
     return duplicated;
   }, [skills, windowWidth]);
 
+  // Render loading state
   const renderLoadingState = () => (
     <section className="py-20 bg-muted/30">
       <div className="container mx-auto px-6">
@@ -168,6 +147,7 @@ export function SkillsSection() {
     return renderLoadingState();
   }
 
+  // Render error state
   if (error) {
     return (
       <section className="py-20 bg-muted/30">
@@ -178,6 +158,7 @@ export function SkillsSection() {
     );
   }
 
+  // Render empty state if no skills available
   if (!skills || skills.length === 0) {
     return (
       <section className="py-20 bg-muted/30">
@@ -193,6 +174,7 @@ export function SkillsSection() {
     );
   }
 
+  // Finally render skills section with category filter and scrolling effect
   return (
     <section ref={ref} className="py-20 bg-muted/30">
       <div className="container mx-auto px-6">
@@ -242,14 +224,14 @@ export function SkillsSection() {
               isIntersecting || forceVisible ? 'opacity-100' : 'opacity-0'
             }`}
             style={{
-              width: `${duplicatedSkills.length * 280}px`,
-              animationDuration: `${duplicatedSkills.length * 0.5}s`,
+              width: `${duplicatedSkills.length * cardWidth}px`,
+              animationDuration: `${duplicatedSkills.length * 0.75}s`,
             }}
           >
             {duplicatedSkills.map((skill, index) => (
               <Card
                 key={skill && skill.id ? `${skill.id}-${index}` : `skill-${index}`}
-                className={`flex-shrink-0 w-64 p-6 text-center bg-gradient-card border-primary/20 hover:border-primary/40 transition-all duration-300 transform hover:scale-105 hover:shadow-primary ${
+                className={`flex-shrink-0 w-64 p-6 text-center bg-gradient-card border-primary/20 hover:border-primary/40 transition-all duration-500 transform hover:scale-105 hover:shadow-primary ${
                   isIntersecting || forceVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'
                 }`}
                 style={{ 
@@ -274,9 +256,9 @@ export function SkillsSection() {
                   {/* Mastery Level Text */}
                   <div className="text-sm text-muted-foreground">
                     {skill.mastery_level >= 90 && 'Expert'}
-                    {skill.mastery_level >= 80 && skill.mastery_level < 90 && 'Advanced'}
-                    {skill.mastery_level >= 60 && skill.mastery_level < 80 && 'Intermediate'}
-                    {skill.mastery_level < 60 && 'Beginner'}
+                    {skill.mastery_level >= 60 && skill.mastery_level < 90 && 'Advanced'}
+                    {skill.mastery_level >= 40 && skill.mastery_level < 60 && 'Intermediate'}
+                    {skill.mastery_level < 40 && 'Beginner'}
                   </div>
                 </div>
               </Card>

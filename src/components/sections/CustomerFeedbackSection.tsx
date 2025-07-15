@@ -1,8 +1,10 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { useCustomerFeedbacks } from "@/hooks/useCustomerFeedbacks";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
+import { useQueryClient } from '@tanstack/react-query';
 import { Card } from "@/components/ui/card";
 import { Star, X } from "lucide-react";
+import { useWindowSize } from '@/lib/utils';
 
 /**
  * Customer feedback section with constant speed right-to-left scrolling and popup functionality
@@ -10,10 +12,13 @@ import { Star, X } from "lucide-react";
  * Used in: Index.tsx for displaying customer testimonials
  */
 export function CustomerFeedbackSection() {
+  const queryClient = useQueryClient();
   const { data: feedbacks, isLoading, error } = useCustomerFeedbacks();
+  const { width: windowWidth } = useWindowSize();
   const { ref, isIntersecting } = useIntersectionObserver();
   const [selectedFeedback, setSelectedFeedback] = useState<any>(null);
   const [forceVisible, setForceVisible] = useState(false);
+  const cardWidth = 380; // width of each feedback card including gap
 
   useEffect(() => {
     if (!isLoading) {
@@ -45,20 +50,25 @@ export function CustomerFeedbackSection() {
     }
   }, [selectedFeedback]);
 
-  // Duplicate feedbacks for seamless scrolling (optimized)
-  const duplications = 2;
+  // Memoize feedbacks for seamless scrolling 
   const duplicatedFeedbacks = useMemo(() => {
     if (!feedbacks || feedbacks.length === 0) return [];
-    const arr = new Array(duplications * feedbacks.length);
+
+    const minCardsNeeded = Math.ceil(windowWidth / cardWidth) + 2;
+    const duplications = Math.max(2, Math.ceil(minCardsNeeded / feedbacks.length));
+    console.log(`Duplicating feedbacks: ${duplications} times for ${feedbacks.length} cards`);
+    const duplicated = new Array(duplications * feedbacks.length);
+    // Optimize array creation for better performance
     for (let i = 0; i < duplications; i++) {
       const offset = i * feedbacks.length;
       for (let j = 0; j < feedbacks.length; j++) {
-        arr[offset + j] = feedbacks[j];
+        duplicated[offset + j] = feedbacks[j];
       }
     }
-    return arr;
-  }, [feedbacks]);
+    return duplicated;
+  }, [feedbacks, windowWidth]);
 
+  // Render loading state
   if (isLoading) {
     return (
       <section className="py-20 bg-background">
@@ -74,6 +84,7 @@ export function CustomerFeedbackSection() {
     );
   }
 
+  // Render error state
   if (error) {
     console.error("Customer feedbacks error:", error);
     return (
@@ -87,6 +98,7 @@ export function CustomerFeedbackSection() {
     );
   }
 
+  // Render empty state if no feedbacks available
   if (!feedbacks || feedbacks.length === 0) {
     return (
       <section className="py-20 bg-background">
@@ -104,6 +116,7 @@ export function CustomerFeedbackSection() {
     );
   }
 
+  // Finally, render testimonials section
   return (
     <section ref={ref} className="py-20 bg-background">
       <div className="container mx-auto px-6">
@@ -121,31 +134,35 @@ export function CustomerFeedbackSection() {
             </span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            What my clients say about working with me.
+            What my colleagues and customers say about working with me.
+          </p>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">            
+            (click on the cards to read)
           </p>
         </div>
 
         {/* Constant Speed Right-to-Left Scrolling Testimonials Container */}
         <div className="relative overflow-hidden py-16">
           <div
-            className={`flex gap-6 animate-scroll-right transition-all duration-700 ${
-              isIntersecting || forceVisible ? "opacity-100" : "opacity-0"
+            // className={`flex gap-6 customer-feedback-scroll transition-all duration-700 ${
+            className={`flex gap-6 animate-scroll-left transition-all duration-700 ${
+                isIntersecting || forceVisible ? "opacity-100" : "opacity-0"
             }`}
             style={{
-              width: `${duplicatedFeedbacks.length * 380}px`,
-              animationDuration: "25s",
-            }}
+              width: `${duplicatedFeedbacks.length * cardWidth}px`,
+              animationDuration: `${duplicatedFeedbacks.length * 0.75}s`,
+              // animationDelay: `${(index % feedbacks.length) * 500}ms`,
+            }}          
           >
             {duplicatedFeedbacks.map((feedback, index) => (
               <Card
-                key={`${feedback.id}-${index}`}
+                key={feedback && feedback.id ? `${feedback.id}-${index}` : `feedback-${index}`}
                 className={`flex-shrink-0 w-96 p-6 bg-gradient-card border-primary/20 hover:border-primary/40 transition-all duration-300 transform hover:scale-105 hover:shadow-primary cursor-pointer ${
-                  isIntersecting || forceVisible
-                    ? "opacity-100 scale-100"
-                    : "opacity-0 scale-90"
+                  isIntersecting || forceVisible ? "opacity-100 scale-100" : "opacity-0 scale-90"
                 }`}
                 style={{
-                  animationDelay: `${(index % feedbacks.length) * 50}ms`,
+                  transitionDelay: `${Math.min((index % (feedback?.length || 1)) * 50, 1000)}ms`,
+                  transitionProperty: 'all'
                 }}
                 onClick={() => setSelectedFeedback(feedback)}
               >

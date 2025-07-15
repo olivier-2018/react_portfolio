@@ -1,5 +1,5 @@
 # Environmental variables
-.env
+#.env
 
 # projects asset data
 projects_assets/
