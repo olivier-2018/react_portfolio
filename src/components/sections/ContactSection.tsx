@@ -45,6 +45,8 @@ export function ContactSection() {
   const queryClient = useQueryClient();
   const recaptchaRef = useRef<ReCAPTCHA>(null);
   const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY; // Add this to your .env
+  const isLocalhost = window.location.hostname === 'localhost' || 
+                      window.location.hostname === '127.0.0.1';
 
   useEffect(() => {
     setForceVisible(true); // Set immediately on mount
@@ -113,7 +115,9 @@ export function ContactSection() {
       });
     } finally {
       setIsLoading(false);
-      recaptchaRef.current?.reset();
+      if (!isLocalhost) {
+        recaptchaRef.current?.reset();
+      }
     }
   };
 
@@ -132,6 +136,14 @@ export function ContactSection() {
     setIsLoading(true);
 
     try {
+      // Trigger reCAPTCHA
+      const recaptchaValue = await recaptchaRef.current?.executeAsync();
+      if (!recaptchaValue) {
+        throw new Error("Please complete the reCAPTCHA.");
+      }
+
+      // Optionally, verify recaptchaValue server-side here
+
       await submitFeedbackMutation.mutateAsync(feedbackFormData);
       toast({
         title: "Feedback submitted successfully!",
@@ -146,10 +158,10 @@ export function ContactSection() {
         message: '',
         rating: 0,
       });
-      // Add 2 seconds delay before reloading feedbacks
+      // Add 1 seconds delay before reloading feedbacks
       setTimeout(() => {
         queryClient.invalidateQueries({ queryKey: ['customer-feedbacks'] });
-      }, 2000);
+      }, 1000);
     } catch (error) {
       console.error('Feedback submission error:', error);
       toast({
@@ -159,6 +171,9 @@ export function ContactSection() {
       });
     } finally {
       setIsLoading(false);
+      if (!isLocalhost) {
+        recaptchaRef.current?.reset();
+      }
     }
   };
 
@@ -392,40 +407,31 @@ export function ContactSection() {
                       />
                     </div>
 
-                    <div className="grid sm:grid-cols-2 gap-4 h-full">
-
-                      <div className="space-y-2">
+                    {!isLocalhost && (
                         <ReCAPTCHA
-                          // className="bg-primary hover:bg-primary/90 text-primary-foreground"
                           ref={recaptchaRef}
                           sitekey={RECAPTCHA_SITE_KEY}
-                          size={Button}
-                        />
-                      </div>
+                          size="invisible"
+                        />)
+                    }
 
-                      <div className="space-y-2 flex">
-                        <Button
-                          type="submit"
-                          disabled={isLoading}
-                          className=" w-full h-full bg-primary hover:bg-primary/90 text-primary-foreground"
-                        >
-                          {isLoading ? (
-                            <>
-                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                              Sending...
-                            </>
-                          ) : (
-                            <>
-                              <Send className="w-4 h-4 mr-2" />
-                              Send Message
-                            </>
-                          )}
-                        </Button>
-                      </div>
-
-                    </div>
-                    
-
+                    <Button
+                      type="submit"
+                      disabled={isLoading}
+                      className=" w-full h-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                    >
+                      {isLoading ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Sending...
+                        </>
+                      ) : (
+                        <>
+                          <Send className="w-4 h-4 mr-2" />
+                          Send Message
+                        </>
+                      )}
+                    </Button>
 
                   </form>
                 ) : (
@@ -525,6 +531,13 @@ export function ContactSection() {
                       />
                     </div>
 
+                    {!isLocalhost && (<ReCAPTCHA
+                        ref={recaptchaRef}
+                        sitekey={RECAPTCHA_SITE_KEY}
+                        size="invisible"
+                      /> )
+                    }
+                        
                     <Button
                       type="submit"
                       disabled={isLoading}
