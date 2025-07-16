@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Send, Star } from 'lucide-react';
+import ReCAPTCHA from "react-google-recaptcha";
 
 /**
  * Contact section with email sending functionality and customer feedback form
@@ -42,6 +43,8 @@ export function ContactSection() {
   const { toast } = useToast();
   const submitFeedbackMutation = useSubmitCustomerFeedback();
   const queryClient = useQueryClient();
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
+  const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY; // Add this to your .env
 
   useEffect(() => {
     setForceVisible(true); // Set immediately on mount
@@ -52,11 +55,19 @@ export function ContactSection() {
     setIsLoading(true);
 
     try {
+      //
       if (!formRef.current) {
         throw new Error('Form reference not found');
       }
 
-      // EmailJS configuration - these would normally be environment variables
+      // Trigger reCAPTCHA
+      const recaptchaValue = await recaptchaRef.current?.executeAsync();
+      if (!recaptchaValue) {
+        throw new Error("Please complete the reCAPTCHA.");
+      }
+      // TODO: Optionally, verify recaptchaValue server-side here (using secret key)
+
+      // EmailJS configuration - see environment variables in .env
       const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
       const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
       const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
@@ -67,7 +78,7 @@ export function ContactSection() {
         company: emailFormData.company,
         subject: emailFormData.subject,
         message: emailFormData.message,
-        to_name: 'Portfolio Owner',
+        to_name: 'Portfolio.BronTechSolutions',
       };
 
       console.log('Sending email with params:', templateParams);
@@ -102,6 +113,7 @@ export function ContactSection() {
       });
     } finally {
       setIsLoading(false);
+      recaptchaRef.current?.reset();
     }
   };
 
@@ -380,23 +392,41 @@ export function ContactSection() {
                       />
                     </div>
 
-                    <Button
-                      type="submit"
-                      disabled={isLoading}
-                      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
-                    >
-                      {isLoading ? (
-                        <>
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Sending...
-                        </>
-                      ) : (
-                        <>
-                          <Send className="w-4 h-4 mr-2" />
-                          Send Message
-                        </>
-                      )}
-                    </Button>
+                    <div className="grid sm:grid-cols-2 gap-4 h-full">
+
+                      <div className="space-y-2">
+                        <ReCAPTCHA
+                          // className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                          ref={recaptchaRef}
+                          sitekey={RECAPTCHA_SITE_KEY}
+                          size={Button}
+                        />
+                      </div>
+
+                      <div className="space-y-2 flex">
+                        <Button
+                          type="submit"
+                          disabled={isLoading}
+                          className=" w-full h-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                        >
+                          {isLoading ? (
+                            <>
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              Sending...
+                            </>
+                          ) : (
+                            <>
+                              <Send className="w-4 h-4 mr-2" />
+                              Send Message
+                            </>
+                          )}
+                        </Button>
+                      </div>
+
+                    </div>
+                    
+
+
                   </form>
                 ) : (
                   // Feedback Form
