@@ -219,12 +219,6 @@ export function ContactSection() {
     }));
   };
 
-  const handleCaptchaError = () => {
-    console.error('reCAPTCHA encountered an error.');
-    alert('Oops! Something went wrong with reCAPTCHA.');
-  };
-  
-
   return (
     <section ref={ref} className="py-20 bg-muted/30">
       <div className="container mx-auto px-6">
@@ -433,7 +427,6 @@ export function ContactSection() {
                           ref={recaptchaRef}
                           sitekey={RECAPTCHA_SITE_KEY}
                           size="invisible"
-                          error-callback={handleCaptchaError}
                         />)
                     }
 
@@ -558,7 +551,6 @@ export function ContactSection() {
                           ref={recaptchaRef}
                           sitekey={RECAPTCHA_SITE_KEY}
                           size="invisible"
-                          error-callback={handleCaptchaError}
                         />)
                     }
 
