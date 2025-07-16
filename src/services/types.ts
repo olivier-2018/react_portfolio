@@ -50,6 +50,7 @@ export interface CustomerFeedback {
   first_name: string;
   last_name: string;
   company_name: string;
+  role: string; 
   message: string;
   rating: number;
   created_at: string;
@@ -59,6 +60,7 @@ export interface CustomerFeedbackForm {
   first_name: string;
   last_name: string;
   company_name: string;
+  role: string; 
   message: string;
   rating: number;
 }

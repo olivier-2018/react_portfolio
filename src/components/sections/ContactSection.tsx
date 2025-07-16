@@ -31,6 +31,7 @@ export function ContactSection() {
     first_name: '',
     last_name: '',
     company_name: '',
+    role: '', // NEW FIELD
     message: '',
     rating: 0,
   });
@@ -129,6 +130,7 @@ export function ContactSection() {
         first_name: '',
         last_name: '',
         company_name: '',
+        role: '',
         message: '',
         rating: 0,
       });
@@ -402,7 +404,7 @@ export function ContactSection() {
                     <div className="text-center mb-6">
                       <h3 className="text-2xl font-bold text-foreground mb-2">Customer Feedback</h3>
                     </div>
-
+                    
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="first_name">First Name *</Label>
@@ -429,20 +431,34 @@ export function ContactSection() {
                         />
                       </div>
                     </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="company_name">Company Name *</Label>
-                      <Input
-                        id="company_name"
-                        name="company_name"
-                        value={feedbackFormData.company_name}
-                        onChange={handleFeedbackInputChange}
-                        required
-                        placeholder="Your Company"
-                        className="bg-background/50 border-primary/20 focus:border-primary"
-                      />
+                    
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="company_name">Company Name *</Label>
+                        <Input
+                          id="company_name"
+                          name="company_name"
+                          value={feedbackFormData.company_name}
+                          onChange={handleFeedbackInputChange}
+                          required
+                          placeholder="Your Company"
+                          className="bg-background/50 border-primary/20 focus:border-primary"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="role">Role</Label>
+                        <Input
+                          id="role"
+                          name="role"
+                          value={feedbackFormData.role}
+                          onChange={handleFeedbackInputChange}
+                          // required
+                          placeholder="e.g. CTO, Project Manager, Client, ..."
+                          className="bg-background/50 border-primary/20 focus:border-primary"
+                        />
+                      </div>
                     </div>
-
+                    
                     <div className="space-y-2">
                       <Label>Quality Assessment *</Label>
                       <div className="flex gap-2">

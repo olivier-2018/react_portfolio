@@ -26,11 +26,7 @@ export function CustomerFeedbackSection() {
     }
   }, [isLoading]);
 
-  console.log("Customer feedback section render:", {
-    feedbacks,
-    isLoading,
-    error,
-  });
+  console.debug("Customer feedback section render:", {feedbacks, isLoading, error });
 
   // Close popup when clicking outside
   useEffect(() => {
@@ -188,12 +184,10 @@ export function CustomerFeedbackSection() {
 
                   {/* Client Info */}
                   <div className="pt-4 border-t border-primary/10">
-                    <p className="font-semibold text-foreground">
-                      {feedback.first_name} {feedback.last_name}
-                    </p>
-                    <p className="text-sm text-primary/70">
-                      {feedback.company_name}
-                    </p>
+                    <p className="font-semibold text-foreground"> {feedback.first_name} {feedback.last_name} </p>                     
+                    {feedback.role 
+                      ? <p className="text-base  text-blue-600">{feedback.role} @ {feedback.company_name}</p> 
+                      : <p className="text-pretty text-blue-600">{feedback.company_name}</p>}   
                   </div>
                 </div>
               </Card>
@@ -233,14 +227,14 @@ export function CustomerFeedbackSection() {
                 "{selectedFeedback.message}"
               </p>
 
-              {/* Client Info */}
+              {/* Client Info in Modal */}
               <div className="pt-6 border-t border-primary/10">
                 <p className="font-semibold text-foreground text-xl">
                   {selectedFeedback.first_name} {selectedFeedback.last_name}
-                </p>
-                <p className="text-primary/70">
-                  {selectedFeedback.company_name}
-                </p>
+                </p>               
+                {selectedFeedback.role 
+                  ? <p className="text-base  text-blue-600">{selectedFeedback.role} @ {selectedFeedback.company_name}</p> 
+                  : <p className="text-pretty text-blue-600">{selectedFeedback.company_name}</p>} 
               </div>
             </div>
           </Card>

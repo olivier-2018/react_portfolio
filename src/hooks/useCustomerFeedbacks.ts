@@ -37,7 +37,7 @@ export function useSubmitCustomerFeedback() {
     mutationFn: async (feedback: CustomerFeedbackForm) => {
       const { data, error } = await supabase
         .from('customer_feedbacks')
-        .insert([feedback])
+        .insert([{ ...feedback }])
         .select()
         .single();
 
@@ -46,7 +46,7 @@ export function useSubmitCustomerFeedback() {
     },
     onSuccess: () => {
       // Invalidate and refetch customer feedbacks
-      queryClient.invalidateQueries({ queryKey: ['customer_feedbacks'] });
+      queryClient.invalidateQueries({ queryKey: ['customer-feedbacks'] });
     },
   });
 }

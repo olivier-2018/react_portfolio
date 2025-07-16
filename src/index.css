@@ -32,7 +32,7 @@
     --secondary-foreground: 230 35% 7%;
 
     /* third colors - elegant purple - used in HeroSection.tsx gradients */
-    --ternary: hsl(128, 100%, 26%);
+    --ternary: hsl(61, 100%, 60%);
     --ternary-foreground: hsl(295, 94%, 14%);
     --ternary-glow: hsl(337, 83%, 32%);
 
