@@ -57,20 +57,24 @@ export function ContactSection() {
     setIsLoading(true);
 
     try {
-      console.log(`isLocalhost is ${isLocalhost}`);
 
-      //
+      // Wait for form to be ready
       if (!formRef.current) {
         throw new Error('Form reference not found');
       }
 
       // Trigger reCAPTCHA
       if (!isLocalhost) {
-        const recaptchaValue = await recaptchaRef.current?.executeAsync();
-        if (!recaptchaValue) {
-          throw new Error("Please complete the reCAPTCHA.");
-        }
+        if (recaptchaRef.current) {
+          const recaptchaValue = await recaptchaRef.current.executeAsync();
+          if (!recaptchaValue) {
+            throw new Error("Please complete the reCAPTCHA.");
+          }
+        } else {
+          throw new Error("reCAPTCHA reference not found");
+        } 
       }
+
       // TODO: Optionally, verify recaptchaValue server-side here (using secret key)
 
       // EmailJS configuration - see environment variables in .env
@@ -141,14 +145,16 @@ export function ContactSection() {
 
     try {
 
-      console.log(`isLocalhost is ${isLocalhost}`);
-
       // Trigger reCAPTCHA
       if (!isLocalhost) {
-        const recaptchaValue = await recaptchaRef.current?.executeAsync();
-        if (!recaptchaValue) {
-          throw new Error("Please complete the reCAPTCHA.");
-        }
+        if (recaptchaRef.current) {
+          const recaptchaValue = await recaptchaRef.current.executeAsync();
+          if (!recaptchaValue) {
+            throw new Error("Please complete the reCAPTCHA.");
+          }
+        } else {
+          throw new Error("reCAPTCHA reference not found");
+        } 
       }
 
       // Optionally, verify recaptchaValue server-side here
@@ -212,6 +218,12 @@ export function ContactSection() {
       rating,
     }));
   };
+
+  const handleCaptchaError = () => {
+    console.error('reCAPTCHA encountered an error.');
+    alert('Oops! Something went wrong with reCAPTCHA.');
+  };
+  
 
   return (
     <section ref={ref} className="py-20 bg-muted/30">
@@ -421,6 +433,7 @@ export function ContactSection() {
                           ref={recaptchaRef}
                           sitekey={RECAPTCHA_SITE_KEY}
                           size="invisible"
+                          error-callback={handleCaptchaError}
                         />)
                     }
 
@@ -545,6 +558,7 @@ export function ContactSection() {
                           ref={recaptchaRef}
                           sitekey={RECAPTCHA_SITE_KEY}
                           size="invisible"
+                          error-callback={handleCaptchaError}
                         />)
                     }
 
