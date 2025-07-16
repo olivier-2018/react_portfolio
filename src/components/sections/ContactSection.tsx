@@ -57,15 +57,19 @@ export function ContactSection() {
     setIsLoading(true);
 
     try {
+      console.log(`isLocalhost is ${isLocalhost}`);
+
       //
       if (!formRef.current) {
         throw new Error('Form reference not found');
       }
 
       // Trigger reCAPTCHA
-      const recaptchaValue = await recaptchaRef.current?.executeAsync();
-      if (!recaptchaValue) {
-        throw new Error("Please complete the reCAPTCHA.");
+      if (!isLocalhost) {
+        const recaptchaValue = await recaptchaRef.current?.executeAsync();
+        if (!recaptchaValue) {
+          throw new Error("Please complete the reCAPTCHA.");
+        }
       }
       // TODO: Optionally, verify recaptchaValue server-side here (using secret key)
 
@@ -136,14 +140,19 @@ export function ContactSection() {
     setIsLoading(true);
 
     try {
+
+      console.log(`isLocalhost is ${isLocalhost}`);
+
       // Trigger reCAPTCHA
-      const recaptchaValue = await recaptchaRef.current?.executeAsync();
-      if (!recaptchaValue) {
-        throw new Error("Please complete the reCAPTCHA.");
+      if (!isLocalhost) {
+        const recaptchaValue = await recaptchaRef.current?.executeAsync();
+        if (!recaptchaValue) {
+          throw new Error("Please complete the reCAPTCHA.");
+        }
       }
 
       // Optionally, verify recaptchaValue server-side here
-
+      
       await submitFeedbackMutation.mutateAsync(feedbackFormData);
       toast({
         title: "Feedback submitted successfully!",
@@ -531,13 +540,14 @@ export function ContactSection() {
                       />
                     </div>
 
-                    {!isLocalhost && (<ReCAPTCHA
-                        ref={recaptchaRef}
-                        sitekey={RECAPTCHA_SITE_KEY}
-                        size="invisible"
-                      /> )
+                    {!isLocalhost && (
+                        <ReCAPTCHA
+                          ref={recaptchaRef}
+                          sitekey={RECAPTCHA_SITE_KEY}
+                          size="invisible"
+                        />)
                     }
-                        
+
                     <Button
                       type="submit"
                       disabled={isLoading}
