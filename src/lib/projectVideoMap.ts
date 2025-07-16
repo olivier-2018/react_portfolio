@@ -3,7 +3,8 @@ const projectVideoAssets = import.meta.glob('@/assets/project_movies/*.{mp4,webm
 
 export const projectVideoMap: Record<string, string> = {};
 
-Object.entries(projectVideoAssets).forEach(([path, url]) => {
+Object.entries(projectVideoAssets).forEach(([path, url]) => {  
+  console.debug(`Processing path: ${path} Mapped URL: ${url}`); // Debug log
   const filename = path.split('/project_movies/').pop();
   if (filename) projectVideoMap[filename] = url as string;
 });

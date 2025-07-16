@@ -10,7 +10,7 @@ export function useSkills(category?: string) {
       let query = supabase
         .from('skills')
         .select('*')
-        .order('mastery_level', { ascending: false });
+        .order('name', { ascending: true });
       
       // filter by category if provided
       if (category && category !== 'All') {

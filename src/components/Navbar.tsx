@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Menu, X, Github, Linkedin, Mail, Youtube } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -89,7 +88,7 @@ export function Navbar() {
             <img  
               src={myLogo}  
               alt="Logo" 
-              className="h-8 w-auto sm:h-10 md:h-12 lg:h-14" 
+              className="h-8 w-auto sm:h-10 md:h-12 lg:h-14 cursor-pointer"
               onClick={handleOpen}
             />
             <ImageModal isOpen={isModalOpen} imageSrc={myLogo}  onClose={handleClose} />

@@ -69,23 +69,23 @@
     );
     --gradient-word1: linear-gradient(
       20deg,
-      hsl(244, 100%, 80%),
-      hsl(241, 73%, 28%)
+      hsl(244, 100%, 79%),
+      hsl(120, 84%, 47%)
     );
     --gradient-word2: linear-gradient(
       20deg,
-      hsl(325, 100%, 72%),
+      hsl(325, 100%, 64%),
       hsl(0, 98%, 21%)
     );
     --gradient-word3: linear-gradient(
       20deg,
       hsl(150, 100%, 50%),
-      hsl(323, 92%, 25%)
+      hsl(202, 100%, 28%)
     );
     --gradient-word4: linear-gradient(
       20deg,
       hsl(39, 100%, 64%),
-      hsl(239, 85%, 26%)
+      hsl(24, 100%, 36%)
     );
     --gradient-word5: linear-gradient(
       90deg,
