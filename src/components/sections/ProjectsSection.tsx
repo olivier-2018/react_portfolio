@@ -14,28 +14,31 @@ import { useToast } from "@/hooks/use-toast";
 import { projectPictureMap } from "@/lib/projectPictureMap";
 import { projectVideoMap } from "@/lib/projectVideoMap";
 
-
 /**
  * Helper to get project pictures asset URL by filename (from DB)
  */
 const getProjectPictureUrl = (filename?: string) => {
   if (!filename) return undefined;
-  // Debug: log available keys
-  if (process.env.NODE_ENV === 'development') {
-    console.log(`filename: ${filename} projectPictureMap: ${projectPictureMap[filename]}`);
+  if (process.env.NODE_ENV === "development") {
+    console.log(
+      `filename: ${filename} => projectPictureMap: ${projectPictureMap[filename]}`
+    );
   }
-  // Direct match only (e.g. 'analytics-dashboard.jpg')
   return projectPictureMap[filename];
 };
+
 /**
  * Helper to get project videos asset URL by filename (from DB)
  */
 const getProjectVideoUrl = (filename?: string) => {
   if (!filename) return undefined;
+  if (process.env.NODE_ENV === "development") {
+    console.log(
+      `filename: ${filename} => projectVideoMap: ${projectVideoMap[filename]}`
+    );
+  }
   return projectVideoMap[filename];
 };
-
-
 
 /**
  * Video popup component for displaying project demos
@@ -51,6 +54,7 @@ function VideoPopup({
   onClose: () => void;
   title: string;
 }) {
+  const isGif = videoSrc.toLowerCase().endsWith(".gif");
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl w-full p-0">
@@ -63,17 +67,26 @@ function VideoPopup({
           >
             <X className="w-4 h-4" />
           </Button>
-          <video
-            src={videoSrc}
-            controls
-            autoPlay
-            loop
-            className="w-full h-auto rounded-lg"
-            style={{ maxHeight: "80vh" }}
-          >
-            <source src={videoSrc} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
+          {isGif ? (
+            <img
+              src={videoSrc}
+              alt={title}
+              className="w-full h-auto rounded-lg"
+              style={{ maxHeight: "80vh" }}
+            />
+          ) : (
+            <video
+              src={videoSrc}
+              controls
+              autoPlay
+              loop
+              className="w-full h-auto rounded-lg"
+              style={{ maxHeight: "80vh" }}
+            >
+              <source src={videoSrc} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          )}
           <div className="p-4 bg-background border-t">
             <h3 className="text-lg font-semibold">{title}</h3>
           </div>
@@ -124,7 +137,7 @@ function ProjectCard({ project }: { project: any }) {
 
   const isVideoFile = (filename: string) => {
     if (!filename) return false;
-    const videoExtensions = [".mp4", ".webm", ".ogv"];
+    const videoExtensions = [".mp4", ".webm", ".ogv", ".gif"];
     return videoExtensions.some((ext) => filename.toLowerCase().endsWith(ext));
   };
 
@@ -148,7 +161,7 @@ function ProjectCard({ project }: { project: any }) {
     : null;
   const hasVideo =
     project.website_url &&
-    isVideoFile(project.website_url) && 
+    isVideoFile(project.website_url) &&
     getProjectVideoUrl(project.website_url);
 
   return (
@@ -233,7 +246,11 @@ function ProjectCard({ project }: { project: any }) {
                   ))}
                 </div>
                 <div className="mt-4 text-right">
-                  <Button size="sm" variant="outline" onClick={() => setSkillsPopupOpen(false)}>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setSkillsPopupOpen(false)}
+                  >
                     Close
                   </Button>
                 </div>
@@ -323,10 +340,10 @@ export function ProjectsSection() {
 
   // Set initial category when categories load
   useEffect(() => {
-  if (categories && categories.length > 0 && !selectedCategory) {
-    setSelectedCategory(categories[0].name);
-  }
-}, [categories, selectedCategory]);
+    if (categories && categories.length > 0 && !selectedCategory) {
+      setSelectedCategory(categories[0].name);
+    }
+  }, [categories, selectedCategory]);
 
   return (
     <section id="projects" ref={ref} className="py-20 bg-background">
