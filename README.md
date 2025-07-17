@@ -39,7 +39,10 @@ nvm use lts/jod
 # 4. Install package dependencies
 npm install
 
-# 5. Start the development server
+# 5. Run the prebuild (optional)
+npm run prebuild
+
+# 6. Start the development server
 npm run dev
 
 ```

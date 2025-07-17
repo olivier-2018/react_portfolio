@@ -6,7 +6,6 @@ WORKDIR /app
 # USER nonrootuser
 COPY package*.json ./
 RUN npm install 
-RUN npm run pre-build
 COPY . . 
 EXPOSE 5173
 CMD ["npm", "run", "dev"]

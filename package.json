@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "pre-build": "sed -i \"s/^VITE_GIT_COMMIT_DATE=.*/VITE_GIT_COMMIT_DATE=\\\"$(git log -1 --format=%cd --date=iso-strict)\\\"/\" .env",
+    "prebuild": "sed -i \"s/^VITE_GIT_COMMIT_DATE=.*/VITE_GIT_COMMIT_DATE=\\\"$(git log -1 --format=%cd --date=iso-strict)\\\"/\" .env",
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
