@@ -102,6 +102,15 @@ function ProjectCard({ project }: { project: any }) {
    // Add state for skills popup
    const [skillsPopupOpen, setSkillsPopupOpen] = useState(false)
 
+   // Auto-close skills popup after 5 seconds
+   useEffect(() => {
+      if (skillsPopupOpen) {
+         const timer = setTimeout(() => setSkillsPopupOpen(false), 5000)
+         return () => clearTimeout(timer)
+      }
+   }, [skillsPopupOpen])
+
+   // Handle like button click
    const handleLike = async () => {
       try {
          await likeProject.mutateAsync(project.name)
@@ -212,33 +221,32 @@ function ProjectCard({ project }: { project: any }) {
                      <Badge
                         variant="outline"
                         className="text-xs cursor-pointer"
-                        onClick={() => setSkillsPopupOpen(true)}
+                        onMouseEnter={() => setSkillsPopupOpen(true)}
+                        // onMouseLeave={() => setSkillsPopupOpen(false)}
                      >
                         +{project.skills_list.length - 3} more
                      </Badge>
                   )}
                </div>
 
-               {/* Skills Popup */}
-               {skillsPopupOpen && (
-                  <Dialog open={skillsPopupOpen} onOpenChange={setSkillsPopupOpen}>
-                     <DialogContent className="max-w-xs w-full p-4">
-                        <h4 className="text-lg font-semibold mb-2">All Skills</h4>
-                        <div className="flex flex-wrap gap-2">
-                           {project.skills_list.map((skill: string) => (
-                              <Badge key={skill} variant="secondary" className="text-xs">
-                                 {skill}
-                              </Badge>
-                           ))}
-                        </div>
-                        <div className="mt-4 text-right">
-                           <Button size="sm" variant="outline" onClick={() => setSkillsPopupOpen(false)}>
-                              Close
-                           </Button>
-                        </div>
-                     </DialogContent>
-                  </Dialog>
-               )}
+               {/* Skills Popup (centered modal, opens on hover) */}
+               <Dialog open={skillsPopupOpen} onOpenChange={setSkillsPopupOpen}>
+                  <DialogContent className="max-w-lg w-full p-4">
+                     <h4 className="text-lg font-semibold mb-2">All Skills</h4>
+                     <div className="flex flex-wrap gap-2">
+                        {project.skills_list.map((skill: string) => (
+                           <Badge key={skill} variant="secondary" className="text-xs">
+                              {skill}
+                           </Badge>
+                        ))}
+                     </div>
+                     {/* <div className="mt-4 text-right">
+                        <Button size="sm" variant="outline" onClick={() => setSkillsPopupOpen(false)}>
+                           Close
+                        </Button>
+                     </div> */}
+                  </DialogContent>
+               </Dialog>
 
                {/* Project Title */}
                <h3 className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors duration-300">
