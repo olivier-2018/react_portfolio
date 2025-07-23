@@ -179,15 +179,22 @@ function ProjectCard({ project }: { project: any }) {
                {/* Overlay with action button */}
                {!hasVideo && (
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                     <Button
-                        variant="secondary"
-                        size="sm"
-                        className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
-                        disabled={!project.website_url}
-                     >
-                        <ExternalLink className="w-4 h-4 mr-2" />
-                        View Project
-                     </Button>
+                     {project.website_url || project.github_url ? (
+                        <Button
+                           variant="secondary"
+                           size="sm"
+                           onClick={() => {
+                              if (project.website_url) {
+                                 openLink(project.website_url)
+                              } else if (project.github_url) {
+                                 openLink(project.github_url)
+                              }
+                           }}
+                        >
+                           <ExternalLink className="w-4 h-4 mr-2" />
+                           {project.website_url ? "View Project website" : "View on GitHub"}
+                        </Button>
+                     ) : null}
                   </div>
                )}
             </div>
