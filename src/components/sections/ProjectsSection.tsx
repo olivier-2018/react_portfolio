@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { ExternalLink, Github, Heart, Play, X } from "lucide-react"
 import { useProjectCategories, useProjectsByCategory, useLikeProject } from "@/hooks/useProjects"
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver"
@@ -90,6 +90,11 @@ function VideoPopup({
 function ProjectCard({ project }: { project: any }) {
    const likeProject = useLikeProject()
    const { toast } = useToast()
+   const [descPopupOpen, setDescPopupOpen] = useState(false)
+   const [skillsPopupOpen, setSkillsPopupOpen] = useState(false)
+   const descRef = useRef<HTMLParagraphElement>(null)
+   const [isDescTruncated, setIsDescTruncated] = useState(false)
+
    const [videoPopup, setVideoPopup] = useState<{
       isOpen: boolean
       videoSrc: string
@@ -99,18 +104,23 @@ function ProjectCard({ project }: { project: any }) {
       videoSrc: "",
       title: "",
    })
-   // Add state for skills popup
-   const [skillsPopupOpen, setSkillsPopupOpen] = useState(false)
 
-   // Auto-close skills popup after 5 seconds
+   // Effect: Auto-close skills popup after 5 seconds
    useEffect(() => {
       if (skillsPopupOpen) {
-         const timer = setTimeout(() => setSkillsPopupOpen(false), 5000)
+         const timer = setTimeout(() => setSkillsPopupOpen(false), 3000)
          return () => clearTimeout(timer)
       }
    }, [skillsPopupOpen])
 
-   // Handle like button click
+   // Effect: Check if description is truncated
+   useEffect(() => {
+      if (descRef.current) {
+         setIsDescTruncated(descRef.current.scrollHeight > descRef.current.clientHeight)
+      }
+   }, [project.project_description])
+
+   // Helper function: Handles likes button click
    const handleLike = async () => {
       try {
          await likeProject.mutateAsync(project.name)
@@ -127,10 +137,12 @@ function ProjectCard({ project }: { project: any }) {
       }
    }
 
+   // Helper function to handle image click to open video or website
    const openLink = (url: string) => {
       window.open(url, "_blank", "noopener,noreferrer")
    }
 
+   // Helper function to check if the project website URL is a video file
    const isVideoFile = (filename: string) => {
       if (!filename) return false
       const videoExtensions = [".mp4", ".webm", ".ogv", ".gif"]
@@ -152,13 +164,14 @@ function ProjectCard({ project }: { project: any }) {
       }
    }
 
+   // Helper variables
    const projectImage = project.image_filename ? getProjectPictureUrl(project.image_filename) : null
    const hasVideo = project.website_url && isVideoFile(project.website_url) && getProjectVideoUrl(project.website_url)
 
    return (
       <>
          <Card className="group overflow-hidden bg-gradient-card border-primary/20 hover:border-primary/40 transition-all duration-300 transform hover:scale-105 hover:shadow-primary">
-            {/* Project Image */}
+            {/* -- Project Image -- */}
             <div className="relative h-48 overflow-hidden cursor-pointer" onClick={handleImageClick}>
                {projectImage ? (
                   <>
@@ -185,14 +198,15 @@ function ProjectCard({ project }: { project: any }) {
                   </div>
                )}
 
-               {/* Overlay with action button */}
+               {/* Picture overlay with action button */}
                {!hasVideo && (
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                      {project.website_url || project.github_url ? (
                         <Button
                            variant="secondary"
                            size="sm"
-                           onClick={() => {
+                           onClick={(e) => {
+                              e.stopPropagation()
                               if (project.website_url) {
                                  openLink(project.website_url)
                               } else if (project.github_url) {
@@ -208,9 +222,17 @@ function ProjectCard({ project }: { project: any }) {
                )}
             </div>
 
-            {/* Card Content */}
+            {/* Video Popup */}
+            <VideoPopup
+               videoSrc={videoPopup.videoSrc}
+               isOpen={videoPopup.isOpen}
+               onClose={() => setVideoPopup({ isOpen: false, videoSrc: "", title: "" })}
+               title={videoPopup.title}
+            />
+
+            {/* Rest of Card Content */}
             <div className="p-6 space-y-4">
-               {/* Skills Used */}
+               {/* -- Skills Used -- */}
                <div className="flex flex-wrap gap-2">
                   {project.skills_list.slice(0, 3).map((skill: string) => (
                      <Badge key={skill} variant="secondary" className="text-xs">
@@ -228,8 +250,7 @@ function ProjectCard({ project }: { project: any }) {
                      </Badge>
                   )}
                </div>
-
-               {/* Skills Popup (centered modal, opens on hover) */}
+               {/* Skills Popup (centered modal, opens on hover, stays visible 3sec) */}
                <Dialog open={skillsPopupOpen} onOpenChange={setSkillsPopupOpen}>
                   <DialogContent className="max-w-lg w-full p-4">
                      <h4 className="text-lg font-semibold mb-2">All Skills</h4>
@@ -247,17 +268,36 @@ function ProjectCard({ project }: { project: any }) {
                      </div> */}
                   </DialogContent>
                </Dialog>
-
-               {/* Project Title */}
+               {/* -- Project Title -- */}
                <h3 className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors duration-300">
                   {project.name}
                </h3>
-
-               {/* Project Description */}
-               <p className="text-muted-foreground text-sm line-clamp-3">{project.project_description}</p>
-
-               {/* Project Links and Like Button */}
+               {/* -- Project Description -- */}
+               <p
+                  ref={descRef}
+                  className={`text-muted-foreground text-sm line-clamp-3 ${
+                     isDescTruncated ? "cursor-pointer hover:underline" : ""
+                  }`}
+                  title={isDescTruncated ? "Click to read more" : undefined}
+                  onClick={() => isDescTruncated && setDescPopupOpen(true)}
+               >
+                  {project.project_description}
+               </p>
+               {/* Description Popup */}
+               <Dialog open={descPopupOpen} onOpenChange={setDescPopupOpen}>
+                  <DialogContent className="max-w-lg w-full p-6">
+                     <h4 className="text-lg font-semibold mb-4">{project.name}</h4>
+                     <p className="text-base text-foreground whitespace-pre-line">{project.project_description}</p>
+                     <div className="mt-6 text-right">
+                        <Button size="sm" variant="outline" onClick={() => setDescPopupOpen(false)}>
+                           Close
+                        </Button>
+                     </div>
+                  </DialogContent>
+               </Dialog>
+               {/* -- Footer with Links and Likes -- */}
                <div className="flex items-center justify-between pt-4 border-t border-border/50">
+                  {/*  Project Links */}
                   <div className="flex items-center space-x-2">
                      {project.github_url && (
                         <Button
@@ -295,14 +335,6 @@ function ProjectCard({ project }: { project: any }) {
                </div>
             </div>
          </Card>
-
-         {/* Video Popup */}
-         <VideoPopup
-            videoSrc={videoPopup.videoSrc}
-            isOpen={videoPopup.isOpen}
-            onClose={() => setVideoPopup({ isOpen: false, videoSrc: "", title: "" })}
-            title={videoPopup.title}
-         />
       </>
    )
 }
