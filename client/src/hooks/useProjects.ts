@@ -21,7 +21,7 @@ export function useProjectCategories() {
  * Hook to fetch projects by category from Supabase
  * @param categoryId - The category ID to filter by
  */
-export function useProjects(category?: string) {
+export function useProjectsByCategory(category?: string) {
    return useQuery({
       queryKey: ["projects", category],
       queryFn: async () => {

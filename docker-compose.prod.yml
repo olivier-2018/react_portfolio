@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+   app:
+      build:
+         context: .
+         dockerfile: Dockerfile.prod
+      container_name: portfolio_prod
+      restart: unless-stopped
+      networks: ["portfolio_net"]
+      ports:
+         - "5000:5000"
+      environment:
+         - NODE_ENV=production
+         - VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
+         - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
+         - VITE_GIT_COMMIT_DATE=${VITE_GIT_COMMIT_DATE}
+         - VITE_RECAPTCHA_SITE_KEY=${VITE_RECAPTCHA_SITE_KEY}
+         - VITE_RECAPTCHA_SECRET_KEY=${VITE_RECAPTCHA_SECRET_KEY}
+         - VITE_EMAILJS_SERVICE_ID=${VITE_EMAILJS_SERVICE_ID}
+         - VITE_EMAILJS_TEMPLATE_ID=${VITE_EMAILJS_TEMPLATE_ID}
+         - VITE_EMAILJS_PUBLIC_KEY=${VITE_EMAILJS_PUBLIC_KEY}
+         - PORT=5000
+      volumes:
+         - ./projects_assets/project_movies:/app/client/dist/assets/project_movies
+         - ./projects_assets/project_pictures:/app/client/dist/assets/project_pictures
+
+networks:
+   portfolio_net:
+      driver: bridge
