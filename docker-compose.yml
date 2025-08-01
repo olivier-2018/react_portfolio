@@ -1,7 +1,7 @@
 services:
-  portfolio_webapp:
+  frontend:
     image: react_portfolio:latest
-    container_name: react_portfolio
+    container_name: react_portfolio_frontend
     restart: unless-stopped
     networks: ['contado_net']
     ports:
@@ -18,6 +18,26 @@ services:
       VITE_EMAILJS_PUBLIC_KEY: ${VITE_EMAILJS_PUBLIC_KEY}
       VITE_DB_SELECT: ${VITE_DB_SELECT}
       VITE_SUPABASE_URL: ${VITE_SUPABASE_URL}
+      VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY}
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: react_portfolio_backend
+    restart: unless-stopped
+    networks: ['contado_net']
+    ports:
+      - "5000:5000"
+    environment:
+      - VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
+      - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
+      - PORT=5000
+    volumes:
+      - ./server:/usr/src/app
+      - /usr/src/app/node_modules
       VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY}
       VITE_POSTGRES_USER: ${VITE_POSTGRES_USER}
       VITE_POSTGRES_PASSWORD: ${VITE_POSTGRES_PASSWORD}
