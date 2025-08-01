@@ -14,7 +14,7 @@ export default defineConfig(({ mode }) => ({
       allowedHosts: [".brontechsolutions.ch"],
       proxy: {
          "/api": {
-            target: "http://localhost:5000",
+            target: "http://localhost:3003",
             changeOrigin: true,
             secure: false,
          },
