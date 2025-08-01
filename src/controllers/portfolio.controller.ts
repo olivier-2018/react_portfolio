@@ -8,7 +8,8 @@ export const getSkills = async (_req: Request, res: Response) => {
       if (error) throw error
       res.json(data)
    } catch (error) {
-      res.status(500).json({ error: error.message })
+      const message = error instanceof Error ? error.message : String(error)
+      res.status(500).json({ error: message })
    }
 }
 
@@ -19,7 +20,8 @@ export const getSkillCategories = async (_req: Request, res: Response) => {
       if (error) throw error
       res.json(data)
    } catch (error) {
-      res.status(500).json({ error: error.message })
+      const message = error instanceof Error ? error.message : String(error)
+      res.status(500).json({ error: message })
    }
 }
 
@@ -30,7 +32,8 @@ export const getProjects = async (_req: Request, res: Response) => {
       if (error) throw error
       res.json(data)
    } catch (error) {
-      res.status(500).json({ error: error.message })
+      const message = error instanceof Error ? error.message : String(error)
+      res.status(500).json({ error: message })
    }
 }
 
@@ -44,6 +47,7 @@ export const getFeedbacks = async (_req: Request, res: Response) => {
       if (error) throw error
       res.json(data)
    } catch (error) {
-      res.status(500).json({ error: error.message })
+      const message = error instanceof Error ? error.message : String(error)
+      res.status(500).json({ error: message })
    }
 }

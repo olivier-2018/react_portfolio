@@ -24,7 +24,7 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
    res.status(500).json({ error: "Something went wrong!" })
 })
 
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 3003
 
 app.listen(PORT, () => {
    console.log(`Server is running on port ${PORT}`)
