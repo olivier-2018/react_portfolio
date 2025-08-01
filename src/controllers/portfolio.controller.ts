@@ -37,6 +37,18 @@ export const getProjects = async (_req: Request, res: Response) => {
    }
 }
 
+export const getProjectCategories = async (_req: Request, res: Response) => {
+   try {
+      const { data, error } = await supabase.from("project_categories").select("*").order("name")
+
+      if (error) throw error
+      res.json(data)
+   } catch (error) {
+      const message = error instanceof Error ? error.message : String(error)
+      res.status(500).json({ error: message })
+   }
+}
+
 export const getFeedbacks = async (_req: Request, res: Response) => {
    try {
       const { data, error } = await supabase

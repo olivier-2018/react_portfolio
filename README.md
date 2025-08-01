@@ -6,12 +6,12 @@ This website is a modern, interactive portfolio designed to showcase your techni
 
 ### Key Features
 
-- **Animated Hero Section:** Eye-catching introduction with floating gradients and smooth transitions.
-- **Skills Showcase:** Filterable, animated skills display with mastery levels and seamless scrolling.
-- **Projects Gallery:** Browse featured projects by category, view demos, and like your favorites.
-- **Client Testimonials:** Constant-speed scrolling feedback carousel with popup details.
-- **Contact & Feedback:** Dual-form section for direct contact or submitting feedback, with instant notifications.
-- **Responsive Design:** Looks great on all devices.
+-  **Animated Hero Section:** Eye-catching introduction with floating gradients and smooth transitions.
+-  **Skills Showcase:** Filterable, animated skills display with mastery levels and seamless scrolling.
+-  **Projects Gallery:** Browse featured projects by category, view demos, and like your favorites.
+-  **Client Testimonials:** Constant-speed scrolling feedback carousel with popup details.
+-  **Contact & Feedback:** Dual-form section for direct contact or submitting feedback, with instant notifications.
+-  **Responsive Design:** Looks great on all devices.
 
 ---
 
@@ -19,8 +19,8 @@ This website is a modern, interactive portfolio designed to showcase your techni
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) (v22+ recommended)
-- [npm](https://www.npmjs.com/) (comes with Node.js)
+-  [Node.js](https://nodejs.org/) (v22+ recommended)
+-  [npm](https://www.npmjs.com/) (comes with Node.js)
 
 ### Local Development
 
@@ -34,7 +34,7 @@ cd react_portfolio
 
 # 3. Install node.js
 nvm install v22
-nvm use lts/jod 
+nvm use lts/jod
 
 # 4. Install package dependencies
 npm install
@@ -46,8 +46,8 @@ npm run prebuild
 npm run dev
 
 ```
-The app will be available at [http://localhost:5173](http://localhost:5173) by default.
----
+
+## The app will be available at [http://localhost:5173](http://localhost:5173) by default.
 
 ## Docker Deployment
 
@@ -59,27 +59,44 @@ docker run -it --rm -p "5173:5173" --network net_portfolio --name react_portfoli
 ```
 
 **alternative:** Use docker compose file
+
 ```sh
 docker compose -f docker-compose.yaml up -d
 ```
 
 **optional:** postgres deployment with Docker
+
 ```sh
 docker compose -f docker-compose_postgres.yml up -d
 ```
 
 ---
 
+## Testing
+
+For backend testing:
+
+```sh
+npm test
+```
+
+For backend-client testing:
+
+```sh
+npx testcafe chromium:headless ./tests/api-client_e2e.ts
+```
+
 ## Tech Stack
 
-- Vite
-- React
-- TypeScript
-- Tailwind CSS
-- shadcn-ui
+-  Vite
+-  React
+-  TypeScript
+-  Tailwind CSS
+-  shadcn-ui
 
 ---
 
 ## TODOs:
 
-- implement dynamic server for local postgres queries and optimization of static content serving 
+-
+-  implement dynamic server for local postgres queries and optimization of static content serving

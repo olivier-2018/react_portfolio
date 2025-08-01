@@ -1,5 +1,11 @@
 import express from "express"
-import { getSkills, getSkillCategories, getProjects, getFeedbacks } from "../controllers/portfolio.controller"
+import {
+   getSkills,
+   getSkillCategories,
+   getProjects,
+   getProjectCategories,
+   getFeedbacks,
+} from "../controllers/portfolio.controller"
 
 const router = express.Router()
 
@@ -9,6 +15,7 @@ router.get("/skill-categories", getSkillCategories)
 
 // Projects routes
 router.get("/projects", getProjects)
+router.get("/project-categories", getProjectCategories)
 
 // Feedbacks routes
 router.get("/feedbacks", getFeedbacks)

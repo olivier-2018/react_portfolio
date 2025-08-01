@@ -1,5 +1,5 @@
 // Frontend API client configuration
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1"
+const API_URL = import.meta.env.BACKEND_API_URL || "http://localhost:3003/api/v1"
 
 export const api = {
    async get<T>(endpoint: string): Promise<T> {
