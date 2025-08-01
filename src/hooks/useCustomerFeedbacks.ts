@@ -1,28 +1,19 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/services/supabaseClient';
+import { api } from '@/services/apiClient';
 import { CustomerFeedback, CustomerFeedbackForm } from '@/services/types';
 
 /**
- * Hook to fetch all customer feedbacks from Supabase
+ * Hook to fetch all customer feedbacks from the API
  * Returns feedbacks ordered by creation date (newest first)
  */
 export function useCustomerFeedbacks() {
   return useQuery({
     queryKey: ['customer-feedbacks'],
     queryFn: async () => {
-      console.log('Fetching customer feedbacks ...');
-      const { data, error } = await supabase
-        .from('customer_feedbacks')
-        .select('*')
-        .order('company_name', { ascending: false });
-      
-      if (error) {
-        console.error('Customer feedbacks fetch error:', error);
-        throw error;
-      }
-      
+      console.log('Fetching customer feedbacks...');
+      const data = await api.get<CustomerFeedback[]>('/feedbacks');
       console.log('Customer feedbacks fetched successfully:', data);
-      return data as CustomerFeedback[];
+      return data;
     },
   });
 }
@@ -30,23 +21,15 @@ export function useCustomerFeedbacks() {
 /**
  * Hook to submit customer feedback
  */
-export function useSubmitCustomerFeedback() {
+export function useAddCustomerFeedback() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (feedback: CustomerFeedbackForm) => {
-      const { data, error } = await supabase
-        .from('customer_feedbacks')
-        .insert([{ ...feedback }])
-        .select()
-        .single();
-
-      if (error) throw error;
+      const data = await api.post<CustomerFeedback>('/feedbacks', feedback);
       return data;
     },
     onSuccess: () => {
-      // Invalidate and refetch customer feedbacks
       queryClient.invalidateQueries({ queryKey: ['customer-feedbacks'] });
     },
   });
-}
