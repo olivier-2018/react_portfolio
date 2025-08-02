@@ -4,7 +4,7 @@ import { useIntersectionObserver } from "@/hooks/useIntersectionObserver"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useWindowSize } from "@/lib/utils"
-import { Skill } from "@/services/types"
+import { SkillCategory } from "@/services/types"
 
 /**
  * Circular progress component for skill mastery visualization
@@ -83,7 +83,11 @@ export function SkillsSection() {
 
    // Append the "ALL" category to categories with loading state handling
    const allCategories = useMemo<SkillCategory[]>(() => {
-      const categoryAll: SkillCategory = { name: "All" }
+      const categoryAll: SkillCategory = {
+         name: "All",
+         created_at: "",
+         updated_at: "",
+      }
       if (categoriesLoading || !categories || categories.length === 0) return [categoryAll]
       else return [categoryAll, ...categories]
    }, [categories, categoriesLoading])
