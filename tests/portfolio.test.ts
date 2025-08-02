@@ -72,19 +72,19 @@ describe("Portfolio backend API extra Routes", () => {
       await supabase.from("projects").delete().eq("name", testProjectName)
    })
 
-   it("GET /api/v1/projects/:ID/likes (initial likes count of 0)", async () => {
-      const res = await request(app).get(`/api/v1/projects/${testProjectName}/likes`)
+   it("GET /api/v1/projects/likes (initial likes count of 0)", async () => {
+      const res = await request(app).get(`/api/v1/projects/likes?name=${encodeURIComponent(testProjectName)}`)
       expect(res.status).toBe(200)
       expect(res.body.likes_count).toBe(0)
    })
 
-   it("POST /api/v1/projects/:ID/likes (increment likes count to 1)", async () => {
-      const res = await request(app).post(`/api/v1/projects/${testProjectName}/likes`)
+   it("POST /api/v1/projects/likes?name (increment likes count to 1)", async () => {
+      const res = await request(app).post(`/api/v1/projects/likes?name=${encodeURIComponent(testProjectName)}`)
       expect(res.status).toBe(200)
       expect(res.body.likes_count).toBe(1)
 
       // Confirm incremented value
-      const res2 = await request(app).get(`/api/v1/projects/${testProjectName}/likes`)
+      const res2 = await request(app).get(`/api/v1/projects/likes?name=${encodeURIComponent(testProjectName)}`)
       expect(res2.body.likes_count).toBe(1)
    })
 })

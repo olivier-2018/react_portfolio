@@ -1,9 +1,9 @@
 import express from "express"
 import {
-   getSkills,
    getSkillCategories,
-   getProjects,
+   getSkills,
    getProjectCategories,
+   getProjects,
    getFeedbacks,
    getProjectLikes,
    incrementProjectLikes,
@@ -12,18 +12,18 @@ import {
 const router = express.Router()
 
 // Skills routes
-router.get("/skills", getSkills)
 router.get("/skill-categories", getSkillCategories)
+router.get("/skills", getSkills)
 
 // Projects routes
-router.get("/projects", getProjects)
 router.get("/project-categories", getProjectCategories)
+router.get("/projects", getProjects)
 
 // Feedbacks routes
 router.get("/feedbacks", getFeedbacks)
 
 // Project Likes routes
-router.get("/projects/:name/likes", getProjectLikes)
-router.post("/projects/:name/likes", incrementProjectLikes)
+router.get("/projects/likes", getProjectLikes)
+router.post("/projects/likes", incrementProjectLikes)
 
 export default router

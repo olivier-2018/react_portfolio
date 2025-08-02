@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react"
 import { ExternalLink, Github, Heart, Play, X } from "lucide-react"
-import { useProjectCategories, useProjectsByCategory, useLikeProject } from "@/hooks/useProjects"
+import { useFetchProjectCategories, useFetchProjects, usePushProjectLikes } from "@/hooks/useProjects"
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -88,7 +88,7 @@ function VideoPopup({
  * Features hover animations and interactive elements
  */
 function ProjectCard({ project }: { project: any }) {
-   const likeProject = useLikeProject()
+   const likeProject = usePushProjectLikes()
    const { toast } = useToast()
    const [descPopupOpen, setDescPopupOpen] = useState(false)
    const [skillsPopupOpen, setSkillsPopupOpen] = useState(false)
@@ -344,9 +344,9 @@ function ProjectCard({ project }: { project: any }) {
  * Features responsive grid layout and smooth animations
  */
 export function ProjectsSection() {
-   const { data: categories } = useProjectCategories()
+   const { data: categories } = useFetchProjectCategories()
    const [selectedCategory, setSelectedCategory] = useState<string>("")
-   const { data: projects, isLoading } = useProjectsByCategory(selectedCategory)
+   const { data: projects, isLoading } = useFetchProjects(selectedCategory)
    const { ref, isIntersecting } = useIntersectionObserver()
    const [forceVisible, setForceVisible] = useState(false)
 

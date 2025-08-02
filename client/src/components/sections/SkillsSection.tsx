@@ -1,10 +1,10 @@
 import { useState, useEffect, useMemo } from "react"
-import { useSkills } from "@/hooks/useSkills"
-import { useSkillCategories } from "@/hooks/useSkillCategories"
+import { useFetchSkillCategories, useFetchSkills } from "@/hooks/useSkills"
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useWindowSize } from "@/lib/utils"
+import { Skill } from "@/services/types"
 
 /**
  * Circular progress component for skill mastery visualization
@@ -67,8 +67,8 @@ function CircularProgress({ value, size = 120 }: { value: number; size?: number 
 export function SkillsSection() {
    const [selectedCategory, setSelectedCategory] = useState<string>("All")
    const { width: windowWidth } = useWindowSize()
-   const { data: categories, isLoading: categoriesLoading } = useSkillCategories()
-   const { data: skills, isLoading: skillsLoading, error } = useSkills(selectedCategory)
+   const { data: categories, isLoading: categoriesLoading } = useFetchSkillCategories()
+   const { data: skills, isLoading: skillsLoading, error } = useFetchSkills(selectedCategory)
    const { ref, isIntersecting } = useIntersectionObserver()
    const [forceVisible, setForceVisible] = useState(false)
 
@@ -81,10 +81,11 @@ export function SkillsSection() {
       }
    }, [isLoading])
 
-   // Prepare categories with loading state handling
-   const allCategories = useMemo<string[]>(() => {
-      if (categoriesLoading) return ["All"]
-      return ["All", ...(categories || [])].map((cat) => String(cat))
+   // Append the "ALL" category to categories with loading state handling
+   const allCategories = useMemo<SkillCategory[]>(() => {
+      const categoryAll: SkillCategory = { name: "All" }
+      if (categoriesLoading || !categories || categories.length === 0) return [categoryAll]
+      else return [categoryAll, ...categories]
    }, [categories, categoriesLoading])
 
    // Memoize duplicated skills with optimized calculation
@@ -93,7 +94,7 @@ export function SkillsSection() {
 
       const minCardsNeeded = Math.ceil(windowWidth / cardWidth) + 2
       const duplications = Math.max(2, Math.ceil(minCardsNeeded / skills.length))
-      console.log(`Duplicating skills: ${duplications} times for ${skills.length} cards`)
+      console.debug(`Duplicating skills: ${duplications} times for ${skills.length} cards`)
       // Optimize array creation for better performance
       const duplicated = new Array(duplications * skills.length)
       for (let i = 0; i < duplications; i++) {
@@ -192,18 +193,18 @@ export function SkillsSection() {
             >
                {allCategories.map((category, idx) => (
                   <Button
-                     key={typeof category === "string" ? category : `category-${idx}`}
-                     variant={selectedCategory === category ? "default" : "outline"}
+                     key={category.name}
+                     variant={selectedCategory === category.name ? "default" : "outline"}
                      size="sm"
-                     onClick={() => setSelectedCategory(category)}
+                     onClick={() => setSelectedCategory(category.name)}
                      className={`transition-all duration-300 ${
-                        selectedCategory === category
+                        selectedCategory === category.name
                            ? "bg-primary text-primary-foreground shadow-lg scale-105"
                            : "hover:bg-primary/10 hover:scale-105"
                      }`}
                      disabled={categoriesLoading}
                   >
-                     {category}
+                     {category.name}
                      {categoriesLoading && <span className="ml-2 inline-block animate-spin">⟳</span>}
                   </Button>
                ))}

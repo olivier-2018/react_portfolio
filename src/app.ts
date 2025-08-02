@@ -5,6 +5,7 @@ import helmet from "helmet"
 import dotenv from "dotenv"
 import path from "path"
 import portfolioRoutes from "./routes/portfolio.routes"
+import logger from "./utils/logger"
 
 dotenv.config()
 
@@ -33,6 +34,11 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
    console.error(err.stack)
    res.status(500).json({ error: "Something went wrong!" })
 })
+// or use Winston logging:
+// app.use((req, res, next) => {
+//    logger.info(`${req.method} ${req.url}`)
+//    next()
+// })
 
 const PORT = process.env.PORT || 3003
 

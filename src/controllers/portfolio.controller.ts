@@ -1,21 +1,12 @@
+import logger from "../utils/logger"
 import { Request, Response } from "express"
 import { supabase } from "../config/supabase"
 
-export const getSkills = async (_req: Request, res: Response) => {
-   try {
-      const { data, error } = await supabase.from("skills").select("*").order("category")
-
-      if (error) throw error
-      res.json(data)
-   } catch (error) {
-      const message = error instanceof Error ? error.message : String(error)
-      res.status(500).json({ error: message })
-   }
-}
-
+// Fetch all skill categories
 export const getSkillCategories = async (_req: Request, res: Response) => {
    try {
       const { data, error } = await supabase.from("skill_categories").select("*").order("name")
+      logger.info(`Fetching skills categories`)
 
       if (error) throw error
       res.json(data)
@@ -24,10 +15,17 @@ export const getSkillCategories = async (_req: Request, res: Response) => {
       res.status(500).json({ error: message })
    }
 }
-
-export const getProjects = async (_req: Request, res: Response) => {
+// Fetch skills by category
+export const getSkills = async (req: Request, res: Response) => {
    try {
-      const { data, error } = await supabase.from("projects").select("*").order("created_at", { ascending: false })
+      const category = req.query.category as string | undefined
+
+      let query = supabase.from("skills").select("*").order("name")
+      if (category && category !== "All") {
+         query = query.eq("category", category)
+         logger.info(`Fetching skills by category: ${category}`)
+      }
+      const { data, error } = await query
 
       if (error) throw error
       res.json(data)
@@ -37,9 +35,30 @@ export const getProjects = async (_req: Request, res: Response) => {
    }
 }
 
+// Fetch all project categories
 export const getProjectCategories = async (_req: Request, res: Response) => {
    try {
       const { data, error } = await supabase.from("project_categories").select("*").order("name")
+      logger.info(`Fetching projects categories`)
+
+      if (error) throw error
+      res.json(data)
+   } catch (error) {
+      const message = error instanceof Error ? error.message : String(error)
+      res.status(500).json({ error: message })
+   }
+}
+// Fetch projects (optional: by category)
+export const getProjects = async (req: Request, res: Response) => {
+   try {
+      const category = req.query.category as string | undefined
+
+      let query = supabase.from("projects").select("*").order("name")
+      if (category && category !== "All") {
+         query = query.eq("category", category)
+         logger.info(`Fetching projects by category: ${category}`)
+      }
+      const { data, error } = await query
 
       if (error) throw error
       res.json(data)
@@ -49,8 +68,10 @@ export const getProjectCategories = async (_req: Request, res: Response) => {
    }
 }
 
+// Fetch feedbacks
 export const getFeedbacks = async (_req: Request, res: Response) => {
    try {
+      logger.info(`Fetching feedbacks`)
       const { data, error } = await supabase
          .from("customer_feedbacks")
          .select("*")
@@ -63,16 +84,19 @@ export const getFeedbacks = async (_req: Request, res: Response) => {
       res.status(500).json({ error: message })
    }
 }
-
+// Fetch likes count for a project
 export const getProjectLikes = async (req: Request, res: Response) => {
    try {
-      const { name } = req.params
+      const projectName = req.query.projectName as string | undefined
+      logger.info(`Fetching likes for project: ${projectName}`)
+
       const { data, error } = await supabase
          .from("projects")
          .select("*")
-         .eq("name", name)
+         .eq("name", projectName)
          .select("likes_count")
          .single()
+
       if (error) throw error
       res.json({ likes_count: data?.likes_count ?? 0 })
    } catch (error) {
@@ -80,27 +104,31 @@ export const getProjectLikes = async (req: Request, res: Response) => {
       res.status(500).json({ error: message })
    }
 }
-
+// Increment likes for a project
 export const incrementProjectLikes = async (req: Request, res: Response) => {
    try {
-      const { name } = req.params
-      // Get current likes
+      const projectName = req.query.name as string | undefined
+      logger.info(`Fetching likes for project: ${projectName}`)
       const { data: project, error: fetchError } = await supabase
          .from("projects")
+         .select("*")
+         .eq("name", projectName)
          .select("likes_count")
-         .eq("name", name)
          .single()
       if (fetchError) throw fetchError
+
       const newLikes = (project?.likes_count ?? 0) + 1
       // Update likes
       const { data, error } = await supabase
          .from("projects")
          .update({ likes_count: newLikes })
-         .eq("name", name)
+         .eq("name", projectName)
          .select("likes_count")
          .single()
+
       if (error) throw error
       res.json({ likes_count: data?.likes_count ?? newLikes })
+      logger.info(`Project Likes increased to ${newLikes} for ${projectName}`)
    } catch (error) {
       const message = error instanceof Error ? error.message : String(error)
       res.status(500).json({ error: message })
