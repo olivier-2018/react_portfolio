@@ -67,23 +67,6 @@ export const getProjects = async (req: Request, res: Response) => {
       res.status(500).json({ error: message })
    }
 }
-
-// Fetch feedbacks
-export const getFeedbacks = async (_req: Request, res: Response) => {
-   try {
-      logger.info(`Fetching feedbacks`)
-      const { data, error } = await supabase
-         .from("customer_feedbacks")
-         .select("*")
-         .order("created_at", { ascending: false })
-
-      if (error) throw error
-      res.json(data)
-   } catch (error) {
-      const message = error instanceof Error ? error.message : String(error)
-      res.status(500).json({ error: message })
-   }
-}
 // Fetch likes count for a project
 export const getProjectLikes = async (req: Request, res: Response) => {
    try {
@@ -129,6 +112,37 @@ export const incrementProjectLikes = async (req: Request, res: Response) => {
       if (error) throw error
       res.json({ likes_count: data?.likes_count ?? newLikes })
       logger.info(`Project Likes increased to ${newLikes} for ${projectName}`)
+   } catch (error) {
+      const message = error instanceof Error ? error.message : String(error)
+      res.status(500).json({ error: message })
+   }
+}
+// Fetch feedbacks
+export const getFeedbacks = async (_req: Request, res: Response) => {
+   try {
+      logger.info(`Fetching feedbacks`)
+      const { data, error } = await supabase
+         .from("customer_feedbacks")
+         .select("*")
+         .order("created_at", { ascending: false })
+
+      if (error) throw error
+      res.json(data)
+   } catch (error) {
+      const message = error instanceof Error ? error.message : String(error)
+      res.status(500).json({ error: message })
+   }
+}
+// Submit a new feedback
+export const submitFeedback = async (req: Request, res: Response) => {
+   try {
+      const feedback = req.body
+      logger.info(`Submitting feedback: ${JSON.stringify(feedback)}`)
+
+      const { data, error } = await supabase.from("customer_feedbacks").insert(feedback).select("*").single()
+      if (error) throw error
+
+      res.status(201).json(data)
    } catch (error) {
       const message = error instanceof Error ? error.message : String(error)
       res.status(500).json({ error: message })

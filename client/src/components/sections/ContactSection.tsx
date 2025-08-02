@@ -91,7 +91,14 @@ export function ContactSection() {
 
          console.log("Sending email with params:", templateParams)
 
-         await emailjs.send(serviceId, templateId, templateParams, publicKey)
+         try {
+            const result = await emailjs.send(serviceId, templateId, templateParams, publicKey)
+            console.log("Email sent!", result.text)
+         } catch (error) {
+            console.error("Email failed to send:", error)
+         }
+
+         // await emailjs.send(serviceId, templateId, templateParams, publicKey)
 
          toast({
             title: "Message sent successfully!",

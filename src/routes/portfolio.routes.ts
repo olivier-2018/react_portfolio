@@ -5,6 +5,7 @@ import {
    getProjectCategories,
    getProjects,
    getFeedbacks,
+   submitFeedback,
    getProjectLikes,
    incrementProjectLikes,
 } from "../controllers/portfolio.controller"
@@ -21,6 +22,7 @@ router.get("/projects", getProjects)
 
 // Feedbacks routes
 router.get("/feedbacks", getFeedbacks)
+router.post("/feedbacks", submitFeedback) // Assuming you have a submitFeedbacks function
 
 // Project Likes routes
 router.get("/projects/likes", getProjectLikes)
