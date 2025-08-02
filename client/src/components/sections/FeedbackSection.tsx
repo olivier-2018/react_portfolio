@@ -11,7 +11,7 @@ import { useWindowSize } from "@/lib/utils"
  * Features: testimonials scroll at constant speed from right to left, click to magnify
  * Used in: Index.tsx for displaying customer testimonials
  */
-export function CustomerFeedbackSection() {
+export function FeedbackSection() {
    const queryClient = useQueryClient()
    const { data: feedbacks, isLoading, error } = useFetchCustomerFeedbacks()
    const { width: windowWidth } = useWindowSize()
