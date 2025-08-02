@@ -6,12 +6,12 @@
    "type": "module",
    "proxy": "http://localhost:3003",
    "scripts": {
-      "start": "node dist/index.js",
       "dev": "vite",
       "build": "vite build",
       "build:dev": "vite build --mode development",
       "lint": "eslint .",
-      "preview": "vite preview"
+      "preview": "vite preview",
+      "start": "node dist/src/index.js"
    },
    "dependencies": {
       "@emailjs/browser": "^4.4.1",

@@ -58,7 +58,7 @@ export function HeroSection() {
                 Hey, I'm 
               </span>
               {/* <br /> */}
-              <span className="text-primary-glow"> Oli !</span>
+              <span className="text-primary-glow"> Oli ! yes</span>
             </h1>
 
             <p className="text-xl lg:text-2xl text-primary-foreground mb-8 font-medium">

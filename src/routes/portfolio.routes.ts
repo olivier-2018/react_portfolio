@@ -5,6 +5,8 @@ import {
    getProjects,
    getProjectCategories,
    getFeedbacks,
+   getProjectLikes,
+   incrementProjectLikes,
 } from "../controllers/portfolio.controller"
 
 const router = express.Router()
@@ -19,5 +21,9 @@ router.get("/project-categories", getProjectCategories)
 
 // Feedbacks routes
 router.get("/feedbacks", getFeedbacks)
+
+// Project Likes routes
+router.get("/projects/:name/likes", getProjectLikes)
+router.post("/projects/:name/likes", incrementProjectLikes)
 
 export default router

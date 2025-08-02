@@ -37,45 +37,31 @@ export function useProjectsByCategory(category?: string) {
 }
 
 /**
- * Hook to like a project and update the likes count
+ * Hook to fetch likes count for a project
+ */
+export function useProjectLikes(projectName: string) {
+   return useQuery({
+      queryKey: ["project-likes", projectName],
+      queryFn: async () => {
+         const data = await api.get<{ likes_count: number }>(`/projects/${projectName}/likes`)
+         return data.likes_count
+      },
+   })
+}
+
+/**
+ * Hook to increment likes for a project
  */
 export function useLikeProject() {
    const queryClient = useQueryClient()
 
    return useMutation({
       mutationFn: async (projectName: string) => {
-         // First get current likes count
-         const { data: project, error: fetchError } = await supabase
-            .from("projects")
-            .select("likes_count")
-            .eq("name", projectName)
-            .single()
-
-         if (fetchError) {
-            console.error("Project Likes fetch error:", fetchError)
-            throw fetchError
-         }
-
-         console.log("Project Likes fetched successfully. Number of Likes:", project.likes_count)
-
-         // Second, Increment likes count
-         const { data, error } = await supabase
-            .from("projects")
-            .update({ likes_count: project.likes_count + 1 })
-            .eq("name", projectName)
-            .select()
-            .single()
-
-         if (error) {
-            console.error("Error updating Project Likes:", error)
-            throw error
-         }
-
-         console.log(`Project Likes updated successfully. Project: ${data.title}, Number of Likes: ${data.likes_count}`)
-         return data
+         const data = await api.post<{ likes_count: number }>(`/projects/${projectName}/likes`, {})
+         return data.likes_count
       },
-      onSuccess: () => {
-         // Invalidate and refetch projects
+      onSuccess: (_data, projectName) => {
+         queryClient.invalidateQueries({ queryKey: ["project-likes", projectName] })
          queryClient.invalidateQueries({ queryKey: ["projects"] })
       },
    })
@@ -85,11 +71,11 @@ export function useLikeProject() {
  * Hook to fetch a single project by ID
  * @param id - The ID of the project to fetch
  */
-export function useProject(id: string) {
+export function useProject(projectName: string) {
    return useQuery({
-      queryKey: ["project", id],
+      queryKey: ["project", projectName],
       queryFn: async () => {
-         const data = await api.get<Project>(`/projects/${id}`)
+         const data = await api.get<Project>(`/projects/${projectName}`)
          return data
       },
    })
@@ -103,7 +89,7 @@ export function useUpdateProject() {
 
    return useMutation({
       mutationFn: async (project: Project) => {
-         const data = await api.post<Project>(`/projects/${project.id}`, project)
+         const data = await api.post<Project>(`/projects/${project.name}`, project)
          return data
       },
       onSuccess: () => {
