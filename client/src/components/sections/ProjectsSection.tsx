@@ -352,7 +352,11 @@ function ProjectCard({ project }: { project: Project }) {
                         <Button
                            variant="ghost"
                            size="icon"
-                           onClick={() => window.open(project.github_url, "_blank", "noopener,noreferrer")}
+                           onClick={() => {
+                              if (project.github_url) {
+                                 window.open(project.github_url, "_blank", "noopener,noreferrer")
+                              }
+                           }}
                            className="hover:text-primary transition-colors duration-200"
                         >
                            <Github className="w-4 h-4" />
@@ -362,7 +366,11 @@ function ProjectCard({ project }: { project: Project }) {
                         <Button
                            variant="ghost"
                            size="icon"
-                           onClick={() => window.open(project.website_url, "_blank", "noopener,noreferrer")}
+                           onClick={() => {
+                              if (project.website_url) {
+                                 window.open(project.website_url, "_blank", "noopener,noreferrer")
+                              }
+                           }}
                            className="hover:text-primary transition-colors duration-200"
                         >
                            <ExternalLink className="w-4 h-4" />
