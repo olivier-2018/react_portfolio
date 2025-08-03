@@ -33,7 +33,9 @@ export function useFetchProjectLikes(projectName: string) {
    return useQuery({
       queryKey: ["project-likes", projectName],
       queryFn: async () => {
-         const data = await api.get<{ likes_count: number }>(`/projects/likes?name=${encodeURIComponent(projectName)}`)
+         const data = await api.get<{ likes_count: number }>(
+            `/projects/likes?projectName=${encodeURIComponent(projectName)}`
+         )
          return data.likes_count
       },
    })
@@ -45,7 +47,7 @@ export function usePushProjectLikes() {
    return useMutation({
       mutationFn: async (projectName: string) => {
          const data = await api.post<{ likes_count: number }>(
-            `/projects/likes?name=${encodeURIComponent(projectName)}`,
+            `/projects/likes?projectName=${encodeURIComponent(projectName)}`,
             {}
          )
          return data.likes_count
