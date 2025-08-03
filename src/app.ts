@@ -93,8 +93,17 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
 //    next()
 // })
 
-app.listen(BACKEND_PORT, () => {
-   logger.info(`Server is running on port ${BACKEND_PORT}`)
-})
+const server = app
+   .listen(BACKEND_PORT, () => {
+      logger.info(`Server is running on port ${BACKEND_PORT}`)
+   })
+   .on("error", (err: NodeJS.ErrnoException) => {
+      if (err.code === "EADDRINUSE") {
+         logger.error(`Port ${BACKEND_PORT} is already in use. Please use a different port.`)
+         process.exit(1)
+      }
+      logger.error(`Failed to start server: ${err.message}`)
+      process.exit(1)
+   })
 
 export { app }

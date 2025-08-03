@@ -24,6 +24,9 @@ dist
 dist-ssr
 *.local
 
+# jest and vitest
+coverage
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
