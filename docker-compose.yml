@@ -1,51 +1,46 @@
 services:
-  frontend:
-    image: react_portfolio:latest
-    container_name: react_portfolio_frontend
-    restart: unless-stopped
-    networks: ['contado_net']
-    ports:
-      - "5173:5173"
-    volumes:
-      - ./projects_assets/project_movies:/app/src/assets/project_movies
-      - ./projects_assets/project_pictures:/app/src/assets/project_pictures
-    environment:
-      VITE_GIT_COMMIT_DATE: ${VITE_GIT_COMMIT_DATE}
-      VITE_RECAPTCHA_SITE_KEY: ${VITE_RECAPTCHA_SITE_KEY}
-      VITE_RECAPTCHA_SECRET_KEY: ${VITE_RECAPTCHA_SECRET_KEY}
-      VITE_EMAILJS_SERVICE_ID: ${VITE_EMAILJS_SERVICE_ID}
-      VITE_EMAILJS_TEMPLATE_ID: ${VITE_EMAILJS_TEMPLATE_ID}
-      VITE_EMAILJS_PUBLIC_KEY: ${VITE_EMAILJS_PUBLIC_KEY}
-      VITE_DB_SELECT: ${VITE_DB_SELECT}
-      VITE_SUPABASE_URL: ${VITE_SUPABASE_URL}
-      VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY}
-    depends_on:
-      - backend
+   frontend:
+      image: react_portfolio:latest
+      container_name: react_portfolio_frontend
+      restart: unless-stopped
+      networks: ["contado_net"]
+      ports:
+         - "5173:5173"
+      volumes:
+         - ./projects_assets/project_movies:/app/src/assets/project_movies
+         - ./projects_assets/project_pictures:/app/src/assets/project_pictures
+      environment:
+         VITE_GIT_COMMIT_DATE: ${VITE_GIT_COMMIT_DATE}
+         VITE_RECAPTCHA_SITE_KEY: ${VITE_RECAPTCHA_SITE_KEY}
+         VITE_RECAPTCHA_SECRET_KEY: ${VITE_RECAPTCHA_SECRET_KEY}
+         VITE_EMAILJS_SERVICE_ID: ${VITE_EMAILJS_SERVICE_ID}
+         VITE_EMAILJS_TEMPLATE_ID: ${VITE_EMAILJS_TEMPLATE_ID}
+         VITE_EMAILJS_PUBLIC_KEY: ${VITE_EMAILJS_PUBLIC_KEY}
+         VITE_DB_SELECT: ${VITE_DB_SELECT}
+         VITE_SUPABASE_URL: ${VITE_SUPABASE_URL}
+         VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY}
+      depends_on:
+         - backend
 
-  backend:
-    build:
-      context: ./server
-      dockerfile: Dockerfile
-    container_name: react_portfolio_backend
-    restart: unless-stopped
-    networks: ['contado_net']
-    ports:
-      - "5000:5000"
-    environment:
-      - VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
-      - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
-      - PORT=5000
-    volumes:
-      - ./server:/usr/src/app
-      - /usr/src/app/node_modules
-      VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY}
-      VITE_POSTGRES_USER: ${VITE_POSTGRES_USER}
-      VITE_POSTGRES_PASSWORD: ${VITE_POSTGRES_PASSWORD}
-      VITE_POSTGRES_DB: ${VITE_POSTGRES_DB}
+   backend:
+      build:
+         context: ./server
+         dockerfile: Dockerfile
+      container_name: react_portfolio_backend
+      restart: unless-stopped
+      networks: ["contado_net"]
+      ports:
+         - "5000:5000"
+      environment:
+         - VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
+         - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
+         - PORT=5000
+      volumes:
+         - ./server:/usr/src/app
+         - /usr/src/app/node_modules
 
 networks:
-  contado_net:
-    name: contado_net
-    driver: bridge
-    external: true
-
+   contado_net:
+      name: contado_net
+      driver: bridge
+      external: true

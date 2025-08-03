@@ -7,46 +7,23 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { useToast } from "@/hooks/use-toast"
-import { projectPictureMap } from "@/lib/projectPictureMap"
-import { projectVideoMap } from "@/lib/projectVideoMap"
+import { Project, ProjectCategory } from "@/services/types"
 
-/**
- * Helper to get project pictures asset URL by filename (from DB)
- */
-const getProjectPictureUrl = (filename?: string) => {
-   if (!filename) return undefined
-   if (process.env.NODE_ENV === "development") {
-      console.log(`filename: ${filename} => projectPictureMap: ${projectPictureMap[filename]}`)
-   }
-   return projectPictureMap[filename]
-}
-
-/**
- * Helper to get project videos asset URL by filename (from DB)
- */
-const getProjectVideoUrl = (filename?: string) => {
-   if (!filename) return undefined
-   if (process.env.NODE_ENV === "development") {
-      console.log(`filename: ${filename} => projectVideoMap: ${projectVideoMap[filename]}`)
-   }
-   return projectVideoMap[filename]
-}
-
-/**
- * Video popup component for displaying project demos
- */
+// Video popup component for displaying project demos
 function VideoPopup({
-   videoSrc,
+   mediaSrc, // blob URL
+   filename, // original filename
    isOpen,
    onClose,
    title,
 }: {
-   videoSrc: string
+   mediaSrc: string
+   filename: string
    isOpen: boolean
    onClose: () => void
    title: string
 }) {
-   const isGif = videoSrc.toLowerCase().endsWith(".gif")
+   const isGif = filename.toLowerCase().endsWith(".gif")
    return (
       <Dialog open={isOpen} onOpenChange={onClose}>
          <DialogContent className="max-w-4xl w-full p-0">
@@ -60,17 +37,17 @@ function VideoPopup({
                   <X className="w-4 h-4" />
                </Button>
                {isGif ? (
-                  <img src={videoSrc} alt={title} className="w-full h-auto rounded-lg" style={{ maxHeight: "80vh" }} />
+                  <img src={mediaSrc} alt={title} className="w-full h-auto rounded-lg" style={{ maxHeight: "80vh" }} />
                ) : (
                   <video
-                     src={videoSrc}
+                     src={mediaSrc}
                      controls
                      autoPlay
                      loop
                      className="w-full h-auto rounded-lg"
                      style={{ maxHeight: "80vh" }}
                   >
-                     <source src={videoSrc} type="video/mp4" />
+                     <source src={mediaSrc} type="video/mp4" />
                      Your browser does not support the video tag.
                   </video>
                )}
@@ -87,7 +64,7 @@ function VideoPopup({
  * Individual project card component
  * Features hover animations and interactive elements
  */
-function ProjectCard({ project }: { project: any }) {
+function ProjectCard({ project }: { project: Project }) {
    const likeProject = usePushProjectLikes()
    const { toast } = useToast()
    const [descPopupOpen, setDescPopupOpen] = useState(false)
@@ -95,6 +72,10 @@ function ProjectCard({ project }: { project: any }) {
    const descRef = useRef<HTMLParagraphElement>(null)
    const [isDescTruncated, setIsDescTruncated] = useState(false)
 
+   // State for image blob URL
+   const [imageUrl, setImageUrl] = useState<string | null>(null)
+   // State for video blob URL (for popup)
+   const [videoUrl, setVideoUrl] = useState<string | null>(null)
    const [videoPopup, setVideoPopup] = useState<{
       isOpen: boolean
       videoSrc: string
@@ -104,6 +85,50 @@ function ProjectCard({ project }: { project: any }) {
       videoSrc: "",
       title: "",
    })
+
+   // Effect: Fetch image blob when image_filename changes
+   useEffect(() => {
+      let url: string | null = null
+      if (project.image_filename) {
+         fetch(`/api/assets/project-pictures/${project.image_filename}`)
+            .then((res) => {
+               if (!res.ok) throw new Error("Image not found")
+               return res.blob()
+            })
+            .then((blob) => {
+               url = URL.createObjectURL(blob)
+               setImageUrl(url)
+            })
+            .catch(() => setImageUrl(null))
+      } else {
+         setImageUrl(null)
+      }
+      return () => {
+         if (url) URL.revokeObjectURL(url)
+      }
+   }, [project.image_filename])
+
+   // Effect: Fetch video blob when website_url is a video file and popup is opened
+   useEffect(() => {
+      let url: string | null = null
+      if (videoPopup.isOpen && project.website_url && isVideoFile(project.website_url)) {
+         fetch(`/api/assets/project-videos/${project.website_url}`)
+            .then((res) => {
+               if (!res.ok) throw new Error("Video not found")
+               return res.blob()
+            })
+            .then((blob) => {
+               url = URL.createObjectURL(blob)
+               setVideoUrl(url)
+            })
+            .catch(() => setVideoUrl(null))
+      } else {
+         setVideoUrl(null)
+      }
+      return () => {
+         if (url) URL.revokeObjectURL(url)
+      }
+   }, [videoPopup.isOpen, project.website_url])
 
    // Effect: Auto-close skills popup after 5 seconds
    useEffect(() => {
@@ -137,11 +162,6 @@ function ProjectCard({ project }: { project: any }) {
       }
    }
 
-   // Helper function to handle image click to open video or website
-   const openLink = (url: string) => {
-      window.open(url, "_blank", "noopener,noreferrer")
-   }
-
    // Helper function to check if the project website URL is a video file
    const isVideoFile = (filename: string) => {
       if (!filename) return false
@@ -151,32 +171,27 @@ function ProjectCard({ project }: { project: any }) {
 
    const handleImageClick = () => {
       if (project.website_url && isVideoFile(project.website_url)) {
-         const videoSrc = getProjectVideoUrl(project.website_url)
-         if (videoSrc) {
-            setVideoPopup({
-               isOpen: true,
-               videoSrc,
-               title: project.name,
-            })
-         }
+         setVideoPopup({
+            isOpen: true,
+            videoSrc: project.website_url,
+            title: project.name,
+         })
       } else if (project.website_url) {
-         openLink(project.website_url)
+         window.open(project.website_url, "_blank", "noopener,noreferrer")
       }
    }
 
-   // Helper variables
-   const projectImage = project.image_filename ? getProjectPictureUrl(project.image_filename) : null
-   const hasVideo = project.website_url && isVideoFile(project.website_url) && getProjectVideoUrl(project.website_url)
+   const hasVideo = project.website_url && isVideoFile(project.website_url)
 
    return (
       <>
          <Card className="group overflow-hidden bg-gradient-card border-primary/20 hover:border-primary/40 transition-all duration-300 transform hover:scale-105 hover:shadow-primary">
             {/* -- Project Image -- */}
             <div className="relative h-48 overflow-hidden cursor-pointer" onClick={handleImageClick}>
-               {projectImage ? (
+               {imageUrl ? (
                   <>
                      <img
-                        src={projectImage}
+                        src={imageUrl}
                         alt={project.name}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                         onError={(e) => {
@@ -208,9 +223,9 @@ function ProjectCard({ project }: { project: any }) {
                            onClick={(e) => {
                               e.stopPropagation()
                               if (project.website_url) {
-                                 openLink(project.website_url)
+                                 window.open(project.website_url, "_blank", "noopener,noreferrer")
                               } else if (project.github_url) {
-                                 openLink(project.github_url)
+                                 window.open(project.github_url, "_blank", "noopener,noreferrer")
                               }
                            }}
                         >
@@ -224,7 +239,8 @@ function ProjectCard({ project }: { project: any }) {
 
             {/* Video Popup */}
             <VideoPopup
-               videoSrc={videoPopup.videoSrc}
+               mediaSrc={videoUrl || ""}
+               filename={project.website_url || ""}
                isOpen={videoPopup.isOpen}
                onClose={() => setVideoPopup({ isOpen: false, videoSrc: "", title: "" })}
                title={videoPopup.title}
@@ -303,7 +319,7 @@ function ProjectCard({ project }: { project: any }) {
                         <Button
                            variant="ghost"
                            size="icon"
-                           onClick={() => openLink(project.github_url)}
+                           onClick={() => window.open(project.github_url, "_blank", "noopener,noreferrer")}
                            className="hover:text-primary transition-colors duration-200"
                         >
                            <Github className="w-4 h-4" />
@@ -313,7 +329,7 @@ function ProjectCard({ project }: { project: any }) {
                         <Button
                            variant="ghost"
                            size="icon"
-                           onClick={() => openLink(project.website_url)}
+                           onClick={() => window.open(project.website_url, "_blank", "noopener,noreferrer")}
                            className="hover:text-primary transition-colors duration-200"
                         >
                            <ExternalLink className="w-4 h-4" />

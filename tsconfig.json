@@ -9,16 +9,15 @@
       // "allowJs": true,
       "strictNullChecks": true,
       "moduleResolution": "node",
-      "allowImportingTsExtensions": true,
+      "allowImportingTsExtensions": false,
 
       "isolatedModules": true,
       // "moduleDetection": "force",
       "resolveJsonModule": true,
-      "outDir": "dist",
       "esModuleInterop": true,
 
       "allowSyntheticDefaultImports": true,
-      "noEmit": true,
+      "noEmit": false,
       // "emitDeclarationOnly": true,
       "strict": true,
       "noUnusedLocals": false,
@@ -27,9 +26,12 @@
 
       /* Paths */
       "baseUrl": ".",
+      "outDir": "./dist",
+      "rootDir": "./src",
       "paths": {
          "@/*": ["src/*"]
       }
    },
-   "include": ["src", "tests"]
+   "include": ["src", "src/**/*.ts", "src/**/*.json"],
+   "exclude": ["node_modules"]
 }

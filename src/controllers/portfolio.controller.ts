@@ -24,6 +24,8 @@ export const getSkills = async (req: Request, res: Response) => {
       if (category && category !== "All") {
          query = query.eq("category", category)
          logger.info(`Fetching skills by category: ${category}`)
+      } else {
+         logger.info(`Fetching all categories`)
       }
       const { data, error } = await query
 
@@ -34,7 +36,6 @@ export const getSkills = async (req: Request, res: Response) => {
       res.status(500).json({ error: message })
    }
 }
-
 // Fetch all project categories
 export const getProjectCategories = async (_req: Request, res: Response) => {
    try {
@@ -57,6 +58,8 @@ export const getProjects = async (req: Request, res: Response) => {
       if (category && category !== "All") {
          query = query.eq("category", category)
          logger.info(`Fetching projects by category: ${category}`)
+      } else {
+         logger.info(`Fetching all projects`)
       }
       const { data, error } = await query
 
@@ -71,7 +74,7 @@ export const getProjects = async (req: Request, res: Response) => {
 export const getProjectLikes = async (req: Request, res: Response) => {
    try {
       const projectName = req.query.projectName as string | undefined
-      logger.info(`Fetching likes for project: ${projectName}`)
+      logger.info(`Fetching project Likes for project ${projectName}`)
 
       const { data, error } = await supabase
          .from("projects")
@@ -91,7 +94,7 @@ export const getProjectLikes = async (req: Request, res: Response) => {
 export const incrementProjectLikes = async (req: Request, res: Response) => {
    try {
       const projectName = req.query.name as string | undefined
-      logger.info(`Fetching likes for project: ${projectName}`)
+      logger.info(`PushLikes-Fetching likes for project: ${projectName}`)
       const { data: project, error: fetchError } = await supabase
          .from("projects")
          .select("*")
@@ -111,7 +114,7 @@ export const incrementProjectLikes = async (req: Request, res: Response) => {
 
       if (error) throw error
       res.json({ likes_count: data?.likes_count ?? newLikes })
-      logger.info(`Project Likes increased to ${newLikes} for ${projectName}`)
+      logger.info(`PushLikes-Increasing Likes by 1 to ${newLikes} Likes for project ${projectName}`)
    } catch (error) {
       const message = error instanceof Error ? error.message : String(error)
       res.status(500).json({ error: message })

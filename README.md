@@ -47,7 +47,7 @@ npm run dev
 
 ```
 
-## The app will be available at [http://localhost:5173](http://localhost:5173) by default.
+## The app will be available at [http://localhost:5173](http://localhost:5173) by default
 
 ## Docker Deployment
 
@@ -96,7 +96,6 @@ npx testcafe chromium:headless ./tests/api-client_e2e.ts
 
 ---
 
-## TODOs:
+## TODOs
 
--
 -  implement dynamic server for local postgres queries and optimization of static content serving
