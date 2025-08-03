@@ -7,9 +7,12 @@ import path from "path"
 import crypto from "crypto"
 import portfolioRoutes from "./routes/portfolio.routes"
 import assetsRoutes from "./routes/assets.routes"
+import healthRoutes from "./routes/health.routes"
 import logger from "./utils/logger"
 
 dotenv.config()
+const API_PREFIX = process.env.VITE_API_PREFIX || "/api/v1"
+const BACKEND_PORT = process.env.VITE_BACKEND_PORT || 3003
 
 const app = express()
 
@@ -66,12 +69,13 @@ const clientBuildPath = path.join(__dirname, "../client/dist")
 app.use(express.static(clientBuildPath))
 
 // API Routes
-app.use("/api/v1", portfolioRoutes)
-app.use("/api/assets", assetsRoutes)
+app.use(`${API_PREFIX}`, portfolioRoutes)
+app.use(`${API_PREFIX}`, assetsRoutes)
+app.use(`${API_PREFIX}`, healthRoutes)
 
 // Serve static project assets
-app.use("/assets/project-pictures", express.static(path.join(__dirname, "../projects_assets/project_pictures")))
-app.use("/assets/project-videos", express.static(path.join(__dirname, "../projects_assets/project_movies")))
+app.use(`${API_PREFIX}/project-pictures`, express.static(path.join(__dirname, "../projects_assets/project_pictures")))
+app.use(`${API_PREFIX}/project-videos`, express.static(path.join(__dirname, "../projects_assets/project_movies")))
 
 // Fallback: serve index.html for any non-API route (SPA support)
 app.get("*", (req, res) => {
@@ -89,10 +93,8 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
 //    next()
 // })
 
-const PORT = process.env.PORT || 3003
-
-app.listen(PORT, () => {
-   logger.info(`Server is running on port ${PORT}`)
+app.listen(BACKEND_PORT, () => {
+   logger.info(`Server is running on port ${BACKEND_PORT}`)
 })
 
 export { app }

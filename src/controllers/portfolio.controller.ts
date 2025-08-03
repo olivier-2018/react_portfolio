@@ -93,7 +93,7 @@ export const getProjectLikes = async (req: Request, res: Response) => {
 // Increment likes for a project
 export const incrementProjectLikes = async (req: Request, res: Response) => {
    try {
-      const projectName = req.query.name as string | undefined
+      const projectName = req.query.projectName as string | undefined
       logger.info(`PushLikes-Fetching likes for project: ${projectName}`)
       const { data: project, error: fetchError } = await supabase
          .from("projects")

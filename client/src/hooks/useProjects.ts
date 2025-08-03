@@ -57,30 +57,3 @@ export function usePushProjectLikes() {
       },
    })
 }
-// Hook to fetch a single project by ID
-// export function useProject(projectName: string) {
-//    return useQuery({
-//       queryKey: ["project", projectName],
-//       queryFn: async () => {
-//          const data = await api.get<Project>(`/projects/${projectName}`)
-//          return data
-//       },
-//    })
-// }
-
-/**
- * Hook to update a project
- */
-// export function useUpdateProject() {
-//    const queryClient = useQueryClient()
-
-//    return useMutation({
-//       mutationFn: async (project: Project) => {
-//          const data = await api.post<Project>(`/projects/${project.name}`, project)
-//          return data
-//       },
-//       onSuccess: () => {
-//          queryClient.invalidateQueries({ queryKey: ["projects"] })
-//       },
-//    })
-// }
