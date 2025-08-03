@@ -4,6 +4,7 @@ import morgan from "morgan"
 import helmet from "helmet"
 import dotenv from "dotenv"
 import path from "path"
+import crypto from "crypto"
 import portfolioRoutes from "./routes/portfolio.routes"
 import assetsRoutes from "./routes/assets.routes"
 import logger from "./utils/logger"
@@ -12,9 +13,49 @@ dotenv.config()
 
 const app = express()
 
+// Middleware to generate nonce
+app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+   // Generate a new nonce for each request
+   res.locals = res.locals || {}
+   res.locals.nonce = Buffer.from(crypto.randomBytes(16)).toString("base64")
+   next()
+})
+
 // Middleware
 app.use(cors())
-app.use(helmet())
+app.use(
+   helmet({
+      contentSecurityPolicy: {
+         directives: {
+            "default-src": ["'self'"],
+            "img-src": ["'self'", "data:", "blob:"],
+            "media-src": ["'self'", "blob:"],
+            "script-src":
+               process.env.NODE_ENV === "production"
+                  ? ["'self'", (req, res) => `'nonce-${res.locals.nonce}'`]
+                  : ["'self'", "'unsafe-eval'", (req, res) => `'nonce-${res.locals.nonce}'`],
+            "script-src-elem":
+               process.env.NODE_ENV === "production"
+                  ? ["'self'", (req, res) => `'nonce-${res.locals.nonce}'`]
+                  : ["'self'", "'unsafe-eval'", (req, res) => `'nonce-${res.locals.nonce}'`],
+            "style-src": ["'self'", "'unsafe-inline'"],
+            "connect-src": ["'self'"],
+            "font-src": ["'self'", "data:"],
+            "object-src": ["'none'"],
+            "base-uri": ["'self'"],
+            "frame-ancestors": ["'none'"],
+            "form-action": ["'self'"],
+            "upgrade-insecure-requests": [],
+            "block-all-mixed-content": [],
+         },
+      },
+      // Other security headers
+      frameguard: { action: "deny" },
+      hsts: { maxAge: 31536000, includeSubDomains: true, preload: true },
+      noSniff: true,
+      referrerPolicy: { policy: "strict-origin-when-cross-origin" },
+   })
+)
 app.use(morgan("dev"))
 app.use(express.json())
 

@@ -92,19 +92,34 @@ function ProjectCard({ project }: { project: Project }) {
       if (project.image_filename) {
          fetch(`/api/assets/project-pictures/${project.image_filename}`)
             .then((res) => {
-               if (!res.ok) throw new Error("Image not found")
+               if (!res.ok) {
+                  console.error(`Error fetching image: ${res.status} ${res.statusText}`)
+                  throw new Error("Image not found")
+               }
+               console.debug(`Project image fetch API successfully executed: ${project.image_filename}`)
                return res.blob()
             })
             .then((blob) => {
+               if (blob.size === 0) {
+                  console.error("Received empty blob")
+                  throw new Error("Empty image data")
+               }
                url = URL.createObjectURL(blob)
+               console.log(`Created blob URL: ${url}`)
                setImageUrl(url)
             })
-            .catch(() => setImageUrl(null))
+            .catch((error) => {
+               console.error("Image fetch/blob error:", error)
+               setImageUrl(null)
+            })
       } else {
          setImageUrl(null)
       }
       return () => {
-         if (url) URL.revokeObjectURL(url)
+         if (url) {
+            URL.revokeObjectURL(url)
+            console.log(`Cleaned up blob URL: ${url}`)
+         }
       }
    }, [project.image_filename])
 
@@ -112,21 +127,37 @@ function ProjectCard({ project }: { project: Project }) {
    useEffect(() => {
       let url: string | null = null
       if (videoPopup.isOpen && project.website_url && isVideoFile(project.website_url)) {
+         console.debug(`Attempting to fetch video: ${project.website_url}`)
          fetch(`/api/assets/project-videos/${project.website_url}`)
             .then((res) => {
-               if (!res.ok) throw new Error("Video not found")
+               if (!res.ok) {
+                  console.error(`Error fetching video: ${res.status} ${res.statusText}`)
+                  throw new Error("Video not found")
+               }
+               console.debug(`Video fetch successful: ${project.website_url}`)
                return res.blob()
             })
             .then((blob) => {
+               if (blob.size === 0) {
+                  console.error("Received empty video blob")
+                  throw new Error("Empty video data")
+               }
                url = URL.createObjectURL(blob)
+               console.debug(`Created video blob URL: ${url}`)
                setVideoUrl(url)
             })
-            .catch(() => setVideoUrl(null))
+            .catch((error) => {
+               console.error("Video fetch/blob error:", error)
+               setVideoUrl(null)
+            })
       } else {
          setVideoUrl(null)
       }
       return () => {
-         if (url) URL.revokeObjectURL(url)
+         if (url) {
+            URL.revokeObjectURL(url)
+            console.log(`Cleaned up video blob URL: ${url}`)
+         }
       }
    }, [videoPopup.isOpen, project.website_url])
 
@@ -195,9 +226,11 @@ function ProjectCard({ project }: { project: Project }) {
                         alt={project.name}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                         onError={(e) => {
+                           console.error(`Image load error for ${project.name}:`, e)
                            const target = e.target as HTMLImageElement
                            target.style.display = "none"
                         }}
+                        onLoad={() => console.log(`Project image loaded successfully: ${project.name}`)}
                      />
                      {hasVideo && (
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
