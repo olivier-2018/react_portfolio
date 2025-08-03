@@ -30,14 +30,16 @@ app.use(
             "default-src": ["'self'"],
             "img-src": ["'self'", "data:", "blob:"],
             "media-src": ["'self'", "blob:"],
-            "script-src":
-               process.env.NODE_ENV === "production"
-                  ? ["'self'", (req, res) => `'nonce-${res.locals.nonce}'`]
-                  : ["'self'", "'unsafe-eval'", (req, res) => `'nonce-${res.locals.nonce}'`],
-            "script-src-elem":
-               process.env.NODE_ENV === "production"
-                  ? ["'self'", (req, res) => `'nonce-${res.locals.nonce}'`]
-                  : ["'self'", "'unsafe-eval'", (req, res) => `'nonce-${res.locals.nonce}'`],
+            "script-src": [
+               "'self'",
+               process.env.NODE_ENV === "production" ? null : "'unsafe-eval'",
+               (_req: any, res: any) => `'nonce-${(res as express.Response).locals.nonce}'`,
+            ].filter(Boolean) as string[],
+            "script-src-elem": [
+               "'self'",
+               process.env.NODE_ENV === "production" ? null : "'unsafe-eval'",
+               (_req: any, res: any) => `'nonce-${(res as express.Response).locals.nonce}'`,
+            ].filter(Boolean) as string[],
             "style-src": ["'self'", "'unsafe-inline'"],
             "connect-src": ["'self'"],
             "font-src": ["'self'", "data:"],
