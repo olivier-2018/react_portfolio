@@ -8,10 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { useToast } from "@/hooks/use-toast"
 import { Project, ProjectCategory } from "@/services/types"
-
-// Load environment variables with fallback values
-const API_PREFIX = import.meta.env.VITE_API_PREFIX || "/api/v1"
-
+import { API_URL } from "@/services/apiClient"
 // Video popup component for displaying project demos
 function VideoPopup({
    mediaSrc, // blob URL
@@ -93,7 +90,7 @@ function ProjectCard({ project }: { project: Project }) {
    useEffect(() => {
       let url: string | null = null
       if (project.image_filename) {
-         fetch(`${API_PREFIX}/project-pictures/${project.image_filename}`)
+         fetch(`${API_URL}/project-pictures/${project.image_filename}`)
             .then((res) => {
                if (!res.ok) {
                   console.error(`Error fetching image: ${res.status} ${res.statusText}`)
@@ -131,7 +128,7 @@ function ProjectCard({ project }: { project: Project }) {
       let url: string | null = null
       if (videoPopup.isOpen && project.website_url && isVideoFile(project.website_url)) {
          console.debug(`Attempting to fetch video: ${project.website_url}`)
-         fetch(`${API_PREFIX}/project-videos/${project.website_url}`)
+         fetch(`${API_URL}/project-videos/${project.website_url}`)
             .then((res) => {
                if (!res.ok) {
                   console.error(`Error fetching video: ${res.status} ${res.statusText}`)

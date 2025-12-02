@@ -1,6 +1,6 @@
 # Environmental variables
-.env
-*.obsolote
+# .env
+*.obsolete
 
 # node dependencies
 node_modules/

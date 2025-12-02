@@ -1,14 +1,17 @@
 services:
    portfolio:
-      image: portfolio:dev # Adjust image name as required
+      image: portfolio:dev
       container_name: portfolio
-      # Backend port exposed for internal use (Nginx reverse proxy will forward to this port)
       expose:
-         - "3003"
+         # Backend port exposed internally (Nginx reverse proxy will forward to this port)
+         # Ensure this matches VITE_BACKEND_PORT in .env
+         - "${VITE_BACKEND_PORT}"
       environment:
          NODE_ENV: ${NODE_ENV}
          VITE_API_PREFIX: ${VITE_API_PREFIX}
          VITE_BACKEND_PORT: ${VITE_BACKEND_PORT}
+         VITE_BACKEND_URL: ${VITE_BACKEND_URL}
+         VITE_FRONTEND_PORT: ${VITE_FRONTEND_PORT}
          VITE_GIT_COMMIT_DATE: ${VITE_GIT_COMMIT_DATE}
          VITE_RECAPTCHA_SITE_KEY: ${VITE_RECAPTCHA_SITE_KEY}
          VITE_RECAPTCHA_SECRET_KEY: ${VITE_RECAPTCHA_SECRET_KEY}
@@ -21,10 +24,11 @@ services:
          VITE_POSTGRES_USER: ${VITE_POSTGRES_USER}
          VITE_POSTGRES_PASSWORD: ${VITE_POSTGRES_PASSWORD}
          VITE_POSTGRES_DB: ${VITE_POSTGRES_DB}
+         CORS_ORIGIN: ${CORS_ORIGIN}
       volumes:
          - ./projects_assets/project_movies:/app/projects_assets/project_movies:ro
          - ./projects_assets/project_pictures:/app/projects_assets/project_pictures:ro
-      restart: unless-stopped
+      restart: always
       networks: ["contado_net"]
 
 networks:

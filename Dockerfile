@@ -37,8 +37,9 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/tsconfig.json ./tsconfig.json
 
-# Expose backend port (documentation only)
-# See port binding in src/app.ts and docker-compose)
+# Expose backend port 
+# Note: for documentation only - actual port is determined by en var VITE_BACKEND_PORT in .env
+# Port binding is configured in docker-compose.yml or docker-compose.prod.yml
 EXPOSE 3003
 
 # Use dumb-init to handle signals
