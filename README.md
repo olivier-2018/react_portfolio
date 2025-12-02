@@ -39,50 +39,85 @@ nvm use lts/jod
 # 4. Install package dependencies
 npm install
 
-# 5. Run the prebuild (optional)
-npm run prebuild
-
-# 6. Start the development server
+# 5. Start the development server
 npm run dev
 
 ```
 
-## The app will be available at [http://localhost:5173](http://localhost:5173) by default
+## Docker containerization: Frontend and Backend Interaction
+
+If using a docker image, the frontend and backend are served from the SAME container on the SAME port (VITE_BACKEND_PORT, 3003 by default):
+
+**Overview:**
+
+-  Backend (Express server) runs on port 3003
+-  Frontend (React static files) are built to client/dist/ and served by the Express backend
+-  When visiting http://localhost:3003, the Express backend serves the static React files from client/dist/
+-  React frontend then makes API calls to http://localhost:3003/api/v1/\* endpoints (same server)
+
+**Visual Flow:**
+
+```bash
+Browser Request → http://localhost:3003
+                     ↓
+            Express Backend (port 3003)
+                     ↓
+        Serves static files from client/dist/
+                     ↓
+            Browser loads React app
+                     ↓
+        React app makes API calls to /api/v1/*
+                     ↓
+            Express Backend handles API requests
+```
+
+**Note on local vs VPS deployment**
+
+-  In local deployment (npm or docker), the backend server port (VITE_BACKEND_PORT) is exposed to the local host so that the backend server is reachable via the browser on localhost:3003.
+
+-  In VPS deployment (docker only), the docker container should be located behind a nginx reverse proxy that will handle external requests and redirect them to the web app inside the container network. The portfolio web app is therefore not exposed to the local host and is only available within the docker network for security.
 
 ## Docker Deployment
 
+### Using docker
+
 ```sh
-docker build -t react_portfolio:latest .
+docker build -t portfolio:dev -f Dockerfile .
 
 docker network create net_portfolio
-docker run -it --rm -p "5173:5173" --network net_portfolio --name react_portfolio react_portfolio:latest
+docker run -it --rm -p "5173:5173" --network net_portfolio --name portfolio portfolio:dev
 ```
 
-**alternative:** Use docker compose file
+### Using docker compose file
 
 ```sh
-docker compose -f docker-compose.yaml up -d
+# Local deployment
+docker compose -f docker-compose.local.yml up -d
+# VPS deployment
+docker compose -f docker-compose.prod.yml up -d
+
 ```
 
-**optional:** postgres deployment with Docker
+### Using npm
 
 ```sh
-docker compose -f docker-compose_postgres.yml up -d
+# Build and deploy (Prod)
+npm run docker:build
+npm run docker:up
+#
+# Check logs
+npm run docker:logs
+# Shut-down
+npm run docker:down
 ```
-
----
 
 ## Testing
 
-For backend testing:
-
 ```sh
+# For backend testing:
 npm test
-```
-
-For backend-client testing:
-
-```sh
+#
+# For backend-client testing:
 npx testcafe chromium:headless ./tests/api-client_e2e.ts
 ```
 
@@ -99,3 +134,4 @@ npx testcafe chromium:headless ./tests/api-client_e2e.ts
 ## TODOs
 
 -  implement dynamic server for local postgres queries and optimization of static content serving
+-  implement Bot Assistant

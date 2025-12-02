@@ -2,9 +2,9 @@ services:
    portfolio:
       image: portfolio:dev # Adjust image name as required
       container_name: portfolio
-      # Backend port exposed for internal use (Nginx reverse proxy will forward to this port)
-      expose:
-         - "3003"
+      # Expose backend port to host for external access
+      ports:
+         - "3003:3003"
       environment:
          NODE_ENV: ${NODE_ENV}
          VITE_API_PREFIX: ${VITE_API_PREFIX}

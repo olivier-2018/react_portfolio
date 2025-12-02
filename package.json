@@ -1,18 +1,19 @@
 {
    "name": "portfolio-server",
    "version": "1.0.0",
-   "description": "Backend server for portfolio application",
+   "description": "portfolio application",
    "main": "src/app.ts",
    "scripts": {
-      "dev:frontend": "cd client && npm run dev",
-      "dev:backend": "nodemon --watch src --ext ts --exec ts-node src/app.ts",
-      "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
       "stamp": "sed -i \"s/^VITE_GIT_COMMIT_DATE=.*/VITE_GIT_COMMIT_DATE=\\\"$(git log -1 --format=%cd --date=iso-strict)\\\"/\" .env",
-      "build:frontend": "cd client && npm run build",
-      "build:backend": "tsup src/app.ts --format cjs --outDir dist",
-      "start": "npm run build:frontend && npm run build:backend && node dist/app.js",
       "test": "jest",
-      "lint": "eslint . --ext .ts"
+      "lint": "eslint . --ext .ts",
+      "build:client": "cd client && npm run build",
+      "build:serve": "npm run build:client && npm run start:prod",
+      "start:prod": "NODE_ENV=production node dist/app.js",
+      "docker:build": "docker build -t portfolio:dev .",
+      "docker:up": "docker compose up",
+      "docker:down": "docker compose down",
+      "docker:logs": "docker compose logs -f"
    },
    "dependencies": {
       "@supabase/supabase-js": "^2.x",
