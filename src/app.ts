@@ -25,7 +25,11 @@ app.use((req: express.Request, res: express.Response, next: express.NextFunction
 })
 
 // Middleware
-app.use(cors())
+const corsOrigin = process.env.CORS_ORIGIN || "*"
+app.use(cors({
+   origin: corsOrigin,
+   credentials: true,
+}))
 app.use(
    helmet({
       contentSecurityPolicy: {
@@ -64,11 +68,7 @@ app.use(
 app.use(morgan("dev"))
 app.use(express.json())
 
-// Serve static files from client build
-const clientBuildPath = path.join(__dirname, "../client/dist")
-app.use(express.static(clientBuildPath))
-
-// API Routes
+// API Routes (Frontend is now served from separate container)
 app.use(`${API_PREFIX}`, portfolioRoutes)
 app.use(`${API_PREFIX}`, assetsRoutes)
 app.use(`${API_PREFIX}`, healthRoutes)
@@ -76,11 +76,6 @@ app.use(`${API_PREFIX}`, healthRoutes)
 // Serve static project assets
 app.use(`${API_PREFIX}/project-pictures`, express.static(path.join(__dirname, "../projects_assets/project_pictures")))
 app.use(`${API_PREFIX}/project-videos`, express.static(path.join(__dirname, "../projects_assets/project_movies")))
-
-// Fallback: serve index.html for any non-API route (SPA support)
-app.get("*", (req, res) => {
-   res.sendFile(path.join(clientBuildPath, "index.html"))
-})
 
 // Error handling middleware
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {

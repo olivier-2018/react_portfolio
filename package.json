@@ -12,11 +12,7 @@
       "start:prod": "NODE_ENV=production node dist/app.js",
       "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
       "dev:backend": "cd . && NODE_ENV=development nodemon --exec ts-node src/app.ts",
-      "dev:frontend": "cd client && npm run dev",
-      "docker:build": "docker build -t portfolio:dev .",
-      "docker:up": "docker compose -f docker-compose.local.yml up",
-      "docker:down": "docker compose -f docker-compose.local.yml down",
-      "docker:logs": "docker compose -f docker-compose.local.yml logs -f"
+      "dev:frontend": "cd client && npm run dev"
    },
    "dependencies": {
       "@supabase/supabase-js": "^2.x",

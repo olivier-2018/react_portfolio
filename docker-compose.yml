@@ -1,0 +1,57 @@
+# docker-compose.separate.yml
+# For VPS deployment with separate frontend and backend containers
+
+version: "3.8"
+
+services:
+   portfolio-backend:
+      # build:
+      #    context: .
+      #    dockerfile: Dockerfile.backend
+      image: portfolio-backend:dev
+      container_name: portfolio-backend
+      restart: unless-stopped
+      # Host port mapping (uncomment ONLY for local deployment)
+      # ports:
+      #    - "${VITE_BACKEND_PORT}:${VITE_BACKEND_PORT}"
+      expose:
+         # Port exposed Internally
+         - "${VITE_BACKEND_PORT}"
+      environment:
+         NODE_ENV: ${NODE_ENV}
+         VITE_API_PREFIX: ${VITE_API_PREFIX}
+         VITE_BACKEND_PORT: ${VITE_BACKEND_PORT}
+         VITE_DB_SELECT: ${VITE_DB_SELECT}
+         VITE_SUPABASE_URL: ${VITE_SUPABASE_URL}
+         VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY}
+         VITE_POSTGRES_USER: ${VITE_POSTGRES_USER}
+         VITE_POSTGRES_PASSWORD: ${VITE_POSTGRES_PASSWORD}
+         VITE_POSTGRES_DB: ${VITE_POSTGRES_DB}
+         VITE_POSTGRES_HOST: ${VITE_POSTGRES_HOST}
+         VITE_POSTGRES_PORT: ${VITE_POSTGRES_PORT}
+         CORS_ORIGIN: ${CORS_ORIGIN}
+      volumes:
+         - ./projects_assets/project_movies:/app/projects_assets/project_movies:ro
+         - ./projects_assets/project_pictures:/app/projects_assets/project_pictures:ro
+      networks: ["contado_net"]
+
+   portfolio-frontend:
+      # build:
+      #    context: .
+      #    dockerfile: Dockerfile.frontend
+      image: portfolio-frontend:dev
+      restart: unless-stopped
+      container_name: portfolio-frontend
+      # Host port mapping (uncomment ONLY for local deployment)
+      # ports:
+      #    - "${VITE_FRONTEND_PORT}:${VITE_FRONTEND_PORT}"
+      expose:
+         # Port exposed Internally
+         - "${VITE_FRONTEND_PORT}"
+      networks: ["contado_net"]
+
+networks:
+   contado_net:
+      name: contado_net
+      driver: bridge
+      external: true

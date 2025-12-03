@@ -39,46 +39,24 @@ nvm use lts/jod
 # 4. Install package dependencies
 npm install
 
-# 5. Start the development server
+# 5. Set your environmental variable
+cp .env.sample .env
+# then update .env with your own data
+
+# 6. Start the development server
 npm run dev
+
+# 7. Check portfolio webapp on browser on localhost:5173 (frontend) or localhost:3003 (backend)
 
 ```
 
 ## Frontend and Backend Interactions
 
-### In Production
-
--  In Production, the Frontend is build as Static React files and included in the same container as the Backend server.
--  The Backend (Express server) runs on port VITE_BACKEND_PORT (3003 by default) and serves Frontend requests as React static files.
--  External requests to the Frontend are much faster as a result and content is delivered by the Backend as required.
-
-**Visual Flow:**
-
-```bash
-Browser Request → http://localhost:3003
-                     ↓
-            Express Backend (port 3003)
-                     ↓
-        Serves static files from client/dist/
-                     ↓
-            Browser loads React app
-                     ↓
-        React app makes API calls to /api/v1/*
-                     ↓
-            Express Backend handles API requests
-```
-
-**Notes on local vs VPS Production deployments**
-
--  In a local deployment (using npm or docker), the backend server port (VITE_BACKEND_PORT) is exposed to the local host so that the backend server is reachable via the browser (default endpoint localhost:3003).
-
--  In VPS deployment (docker only), the docker container should be located behind a nginx reverse proxy that will handle external requests and redirect them to the web app inside the container network. The portfolio web app is therefore not exposed to the local host and is only available within the docker network for security.
-
 ## In Development
 
--  In Development, Frontend and Backend servers are running independently from each other and on different ports.
+-  In Development Mode, the Frontend and Backend servers are both running live and concurrently but on different ports (specified in .env.sample).
 -  The ensures a smooth and interactive development session where changes to either frontend and backend are immediately visible on the LIVE server.
--  API calls to the backend endpoints can be monitored in the browser console or in the server logs.
+-  API calls from the frontend to the backend can be monitored in the browser console or in the server logs.
 
 **Visual Flow:**
 
@@ -106,48 +84,47 @@ Response sent back to Frontend
 React App updates UI with new data
 ```
 
-## Production Deployment (Local or on VPS)
+### In Production
 
-### Using docker
+-  In Production, the Frontend and backend are build into separate docker containers and must deployed in the same docker network.
+-  The frontend (REACT VITE) is listening on port VITE_FRONTEND_PORT (5173 by default)
+-  The Backend (Express server) runs on port VITE_BACKEND_PORT (3003 by default) and serves Frontend requests internally.
+
+-  If deployed locally,
+
+   -  you will first need to create a docker network, then update the docker-compose file with the network name.
+   -  You will then need to ensure the port mapping is uncommented in the docker-compose file to expose the frontend and/or the backend to your localhost.
+   -  Providing you have build the docker images using the respective Dockerfiles, you will be able to deploy bothe containers using the docker-compose file.
+
+-  If deployed on a VPS, possibly behind a nginx reverse proxy (running in the same docker network):
+   -  it is recommended to comment out the port binding to isolate the container services to the docker network.
+   -  you may want to update the network name to match your nginx docker network
+
+**Warning** Regardless of deployment destination, you will need to edit the Dockerfiles to match the ports the container are listening to, to match the value specified in the .env.sample.
+
+## Deployments
+
+First check the validity of the Dockerfiles with regard to port mapping.  
+Second, check the validity of the docker-compose file with regard to:
+
+-  docker image names & tags
+-  port mapping enabled for local deployment only
+-  docker network name
+
+### Production Deployments (Local or on VPS)
 
 ```sh
-# Build Docker image
-docker build -t portfolio:dev -f Dockerfile .
+# Build Frontend Docker image
+docker build -t portfolio-frontend:dev -f Dockerfile.frontend .
+# Build Backend Docker image
+docker build -t portfolio-backend:dev -f Dockerfile.backend .
 # Create network if not existing
 docker network create net_portfolio
 # Start container (check port values match your .env file)
-docker run -it --rm -p "5173:5173" --network net_portfolio --name portfolio portfolio:dev
+docker compose -f docker-compose.yml up -f
 ```
 
-### Using docker compose file
-
-**Warning:** Ensure the PORT value in the docker-compose YAML files matches the value in your .env file.
-
-```sh
-# Local deployment
-docker compose -f docker-compose.local.yml up -d
-# VPS deployment
-docker compose -f docker-compose.prod.yml up -d
-
-```
-
-### Using npm
-
-Docker deployment is for local or VPS Production deployments.  
-**Warning:** Ensure the PORT value in the docker-compose YAML files matches the value in your .env file.
-
-```sh
-# Build and deploy
-npm run docker:build
-npm run docker:up
-#
-# Check logs
-npm run docker:logs
-# Shut-down
-npm run docker:down
-```
-
-## Development Deployment (Local only)
+### Development Deployment (Local only)
 
 The Frontend & Backend development servers are launched on their respective ports, as specified in the .env file.
 
@@ -156,7 +133,7 @@ The Frontend & Backend development servers are launched on their respective port
 npm run dev
 ```
 
-## Testing
+### Testing
 
 ```sh
 # For backend testing:
@@ -166,41 +143,6 @@ npm test
 npx testcafe chromium:headless ./tests/api-client_e2e.ts
 ```
 
-## Port Configuration Guide
-
-The portfolio application uses parameterized port configuration to support different deployment environments. Frontend and backend ports are controlled via environment variables.
-
-### Port Environment Variables
-
--  **`VITE_FRONTEND_PORT`** — Frontend dev server port (dev environment only). Default: `5173`
--  **`VITE_BACKEND_PORT`** — Backend Express server port (all environments). Default: `3003`
--  **`VITE_BACKEND_URL`** — Backend API URL for frontend requests. Default: `http://localhost:{VITE_BACKEND_PORT}`
-
-### Port Configuration by Environment
-
-| Environment                                    | Frontend Port | Backend Port | Frontend+Backend | Notes                                                          |
-| ---------------------------------------------- | ------------- | ------------ | ---------------- | -------------------------------------------------------------- |
-| **Local Dev** (`npm run dev`)                  | 5173          | 3003         | ✗ Separate       | Vite proxy forwards `/api/*` to backend                        |
-| **Local Docker Prod** (`docker compose up`)    | N/A           | 3003         | ✓ Same (3003)    | Single container serves both on port 3003                      |
-| **VPS Production** (`docker-compose.prod.yml`) | N/A           | 5173         | ✓ Same (5173)    | Single container, Nginx reverse proxy handles external routing |
-
-**Notes:** Ports are configurable in the .env file.
-
-### How Ports Work
-
-**Local Development** (`npm run dev`):
-
--  Frontend (Vite dev server) runs on port 5173
--  Backend (Express) runs on port 3003
--  Vite proxy intercepts `/api/*` requests and forwards them to `http://localhost:3003`
--  Frontend and backend are **separate processes** for fast iterative development
-
-**Docker Deployments** (local and VPS) and **NPM Production environment** (local):
-
--  Frontend (React static files in `client/dist/`) and backend (Express) run in the **same container** on the **same port**
--  Express server serves both static frontend files and API endpoints on the same port
--  Frontend makes API calls to `http://localhost:{VITE_BACKEND_PORT}/api/v1/*`
-
 ## Tech Stack
 
 -  Vite
@@ -208,8 +150,6 @@ The portfolio application uses parameterized port configuration to support diffe
 -  TypeScript
 -  Tailwind CSS
 -  shadcn-ui
-
----
 
 ## TODOs
 
