@@ -30,6 +30,9 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package.json ./package.json
 
+# Copy .env file for runtime environment variables (CORS_ORIGIN, VITE_BACKEND_PORT, etc.)
+COPY .env ./
+
 # Copy static assets
 COPY --from=builder /app/projects_assets ./projects_assets
 

@@ -4,20 +4,19 @@
 
 // Read from import.meta.env (Vite exposes VITE_* variables from .env)
 const API_PREFIX = import.meta.env.VITE_API_PREFIX || "/api/v1"
-const BACKEND_URL_BASE = import.meta.env.VITE_BACKEND_URL || "http://localhost"
-const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT || "3003"
 
-// Construct the full API URL dynamically (consistent across all environments)
-export const API_URL = `${BACKEND_URL_BASE}:${BACKEND_PORT}${API_PREFIX}`
+// Use relative URLs for API calls
+// In production: Nginx Proxy Manager routes /api/* to backend via custom location
+// In development: Vite dev server can proxy /api/* to backend (see vite.config.ts)
+export const API_URL = API_PREFIX
 export const API_PREFIX_EXPORT = API_PREFIX
 
 // Debugging: Log configuration on app startup
 if (typeof window !== "undefined") {
    console.log("🔧 Frontend API Configuration Loaded:")
    console.log(`   API_PREFIX: ${API_PREFIX}`)
-   console.log(`   BACKEND_URL: ${BACKEND_URL_BASE}`)
-   console.log(`   BACKEND_PORT: ${BACKEND_PORT}`)
-   console.log(`   Full API_URL: ${API_URL}`)
+   console.log(`   API_URL: ${API_URL}`)
+   console.log(`   Routing: Nginx Proxy Manager routes /api/* to backend`)
    console.log(`   Environment: ${import.meta.env.MODE}`)
 }
 

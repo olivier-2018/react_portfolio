@@ -44,7 +44,9 @@ export function ContactSection() {
    const submitFeedbackMutation = useSubmitCustomerFeedback()
    const queryClient = useQueryClient()
    const recaptchaRef = useRef<ReCAPTCHA>(null)
-   const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY // Add this to your .env
+   const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY
+   // Skip recaptcha if sitekey is missing or is the default test key
+   const hasValidRecaptchaKey = RECAPTCHA_SITE_KEY && RECAPTCHA_SITE_KEY !== "6LeWeIUrAAAAAKVcy3Zkcq9qNt7REEe7uD0tR3Vj"
    const isLocalhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
 
    useEffect(() => {
@@ -464,7 +466,7 @@ export function ContactSection() {
                                  />
                               </div>
 
-                              {!isLocalhost && (
+                              {!isLocalhost && hasValidRecaptchaKey && (
                                  <ReCAPTCHA ref={recaptchaRef} sitekey={RECAPTCHA_SITE_KEY} size="invisible" />
                               )}
 
@@ -583,7 +585,7 @@ export function ContactSection() {
                                  />
                               </div>
 
-                              {!isLocalhost && (
+                              {!isLocalhost && hasValidRecaptchaKey && (
                                  <ReCAPTCHA ref={recaptchaRef} sitekey={RECAPTCHA_SITE_KEY} size="invisible" />
                               )}
 

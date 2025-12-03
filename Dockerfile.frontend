@@ -5,16 +5,19 @@ FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-# Copy client package files
-COPY client/package.json client/package-lock.json ./
+# Copy root .env file (contains VITE_* variables)
+# This must be at root level since client/vite.config.ts looks for it there
+COPY .env ./
 
-# Install dependencies
+# Copy entire client directory structure
+COPY client ./client
+
+# Install dependencies from client directory
+WORKDIR /app/client
 RUN npm ci
 
-# Copy client source code
-COPY client . 
-
 # Build React frontend (uses VITE_* from .env at build time)
+# vite.config.ts uses: path.resolve(__dirname, "..") to find .env in /app/.env
 RUN npm run build
 
 # Runtime stage: Simple Node.js server to serve static files
@@ -25,11 +28,11 @@ WORKDIR /app
 # Install 'serve' to serve static files
 RUN npm install -g serve
 
-# Copy built frontend from builder stage
-COPY --from=builder /app/dist ./dist
+# Copy built frontend from builder stage (dist is at /app/client/dist)
+COPY --from=builder /app/client/dist ./dist
 
-# Expose port (will listen on port 5173)
+# Expose port
 EXPOSE 5173
 
-# Serve static files on port 80
+# Serve static files on port 5173
 CMD ["serve", "-s", "dist", "-l", "5173"]

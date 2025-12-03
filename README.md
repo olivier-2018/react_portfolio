@@ -143,6 +143,46 @@ npm test
 npx testcafe chromium:headless ./tests/api-client_e2e.ts
 ```
 
+## Nginx
+
+### NPM
+
+Steps in Nginx Proxy Manager UI:
+
+-  Go to your existing proxy host (the one for portfolio.brontechsolutions.ch)
+-  Click on it to edit
+-  Go to the "Custom Locations" tab
+-  Click "Add Custom Location" and add:
+-  Location: /api
+-  Scheme: http://
+-  Forward Hostname/IP: portfolio-backend
+-  Forward Port: 3003
+-  Check: "Block Common Exploits"
+
+### nginx server
+
+```sh
+server {
+listen 443 ssl http2;
+server_name portfolio.brontechsolutions.ch;
+
+    ssl_certificate ...;
+    ssl_certificate_key ...;
+
+    # Serve frontend
+    location / {
+        proxy_pass http://portfolio-frontend:5173;
+    }
+
+    # Proxy API calls to backend (this is the missing piece!)
+    location /api/ {
+        proxy_pass http://portfolio-backend:3003;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+```
+
 ## Tech Stack
 
 -  Vite
