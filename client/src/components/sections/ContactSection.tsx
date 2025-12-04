@@ -45,13 +45,19 @@ export function ContactSection() {
    const queryClient = useQueryClient()
    const recaptchaRef = useRef<ReCAPTCHA>(null)
    const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY
-   // Skip recaptcha if sitekey is missing or is the default test key
-   const hasValidRecaptchaKey = RECAPTCHA_SITE_KEY && RECAPTCHA_SITE_KEY !== "6LeWeIUrAAAAAKVcy3Zkcq9qNt7REEe7uD0tR3Vj"
-   const isLocalhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+   // Check if site key is available
+   const hasValidRecaptchaKey = !!RECAPTCHA_SITE_KEY
+   // Use reCAPTCHA unless in dev mode or explicitly disabled in production
+   const isDevMode = import.meta.env.MODE === "development"
+   const useRecaptcha = import.meta.env.VITE_USE_RECAPTCHA === "true"
+   const shouldUseRecaptcha = !isDevMode && useRecaptcha
 
    useEffect(() => {
       setForceVisible(true) // Set immediately on mount
-   }, [])
+
+      // Log reCAPTCHA final state on component mount
+      console.log(`📋 reCAPTCHA: ${shouldUseRecaptcha ? "✅ ENABLED" : "❌ DISABLED"}`)
+   }, [shouldUseRecaptcha])
 
    const handleEmailSubmit = async (e: React.FormEvent) => {
       e.preventDefault()
@@ -63,8 +69,8 @@ export function ContactSection() {
             throw new Error("Form reference not found")
          }
 
-         // Trigger reCAPTCHA
-         if (!isLocalhost) {
+         // Trigger reCAPTCHA if enabled
+         if (shouldUseRecaptcha) {
             if (recaptchaRef.current) {
                const recaptchaValue = await recaptchaRef.current.executeAsync()
                if (!recaptchaValue) {
@@ -125,7 +131,7 @@ export function ContactSection() {
          })
       } finally {
          setIsLoading(false)
-         if (!isLocalhost) {
+         if (shouldUseRecaptcha) {
             recaptchaRef.current?.reset()
          }
       }
@@ -146,21 +152,27 @@ export function ContactSection() {
       setIsLoading(true)
 
       try {
-         // Trigger reCAPTCHA
-         if (!isLocalhost) {
+         let recaptchaToken: string | undefined = undefined
+
+         // Capture reCAPTCHA token if enabled
+         if (shouldUseRecaptcha) {
             if (recaptchaRef.current) {
-               const recaptchaValue = await recaptchaRef.current.executeAsync()
-               if (!recaptchaValue) {
-                  throw new Error("Please complete the reCAPTCHA.")
+               recaptchaToken = await recaptchaRef.current.executeAsync()
+               if (!recaptchaToken) {
+                  throw new Error("reCAPTCHA failed. Please try again.")
                }
             } else {
-               throw new Error("reCAPTCHA reference not found")
+               throw new Error("reCAPTCHA component not available")
             }
          }
 
-         // Optionally, verify recaptchaValue server-side here
+         // Include token in feedback payload
+         const feedbackPayload = {
+            ...feedbackFormData,
+            recaptchaToken,
+         }
 
-         await submitFeedbackMutation.mutateAsync(feedbackFormData)
+         await submitFeedbackMutation.mutateAsync(feedbackPayload)
          toast({
             title: "Feedback submitted successfully!",
             description: "Thank you for your valuable feedback.",
@@ -187,8 +199,8 @@ export function ContactSection() {
          })
       } finally {
          setIsLoading(false)
-         if (!isLocalhost) {
-            recaptchaRef.current?.reset()
+         if (shouldUseRecaptcha && recaptchaRef.current) {
+            recaptchaRef.current.reset()
          }
       }
    }
@@ -466,7 +478,7 @@ export function ContactSection() {
                                  />
                               </div>
 
-                              {!isLocalhost && hasValidRecaptchaKey && (
+                              {shouldUseRecaptcha && hasValidRecaptchaKey && (
                                  <ReCAPTCHA ref={recaptchaRef} sitekey={RECAPTCHA_SITE_KEY} size="invisible" />
                               )}
 
@@ -585,7 +597,7 @@ export function ContactSection() {
                                  />
                               </div>
 
-                              {!isLocalhost && hasValidRecaptchaKey && (
+                              {shouldUseRecaptcha && hasValidRecaptchaKey && (
                                  <ReCAPTCHA ref={recaptchaRef} sitekey={RECAPTCHA_SITE_KEY} size="invisible" />
                               )}
 

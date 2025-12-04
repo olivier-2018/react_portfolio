@@ -1,6 +1,7 @@
 import logger from "../utils/logger"
 import { Request, Response } from "express"
 import { supabase } from "../config/supabase"
+import { verifyRecaptchaToken } from "../utils/recaptcha"
 
 // Fetch all skill categories
 export const getSkillCategories = async (_req: Request, res: Response) => {
@@ -139,10 +140,31 @@ export const getFeedbacks = async (_req: Request, res: Response) => {
 // Submit a new feedback
 export const submitFeedback = async (req: Request, res: Response) => {
    try {
-      const feedback = req.body
-      logger.info(`Submitting feedback: ${JSON.stringify(feedback)}`)
+      const { recaptchaToken, ...feedbackData } = req.body
+      const isDevMode = process.env.NODE_ENV === "development"
+      const useRecaptcha = process.env.VITE_USE_RECAPTCHA === "true"
+      const recaptchaEnabled = !isDevMode && useRecaptcha
 
-      const { data, error } = await supabase.from("customer_feedbacks").insert(feedback).select("*").single()
+      logger.info(`Submitting feedback: ${JSON.stringify(feedbackData)}`)
+      logger.info(`📋 reCAPTCHA: ${recaptchaEnabled ? "✅ ENABLED" : "❌ DISABLED"}`)
+
+      // Verify reCAPTCHA token if not in dev mode and reCAPTCHA is enabled
+      if (!isDevMode && useRecaptcha && recaptchaToken) {
+         const secretKey = process.env.VITE_RECAPTCHA_SECRET_KEY
+         const verification = await verifyRecaptchaToken(recaptchaToken, secretKey || "")
+
+         if (!verification.isValid) {
+            logger.warn("reCAPTCHA verification failed for feedback submission")
+            return res.status(403).json({ error: "Verification failed. Please try again." })
+         }
+      } else if (!isDevMode && useRecaptcha && !recaptchaToken) {
+         logger.warn("reCAPTCHA token missing in production mode with reCAPTCHA enabled")
+         return res.status(400).json({ error: "reCAPTCHA token is required" })
+      }
+
+      // Insert feedback (without the token)
+      const { data, error } = await supabase.from("customer_feedbacks").insert(feedbackData).select("*").single()
+
       if (error) throw error
 
       res.status(201).json(data)
