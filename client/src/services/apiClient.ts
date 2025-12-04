@@ -13,11 +13,11 @@ export const API_PREFIX_EXPORT = API_PREFIX
 
 // Debugging: Log configuration on app startup
 if (typeof window !== "undefined") {
-   console.log("🔧 Frontend API Configuration Loaded:")
-   console.log(`   API_PREFIX: ${API_PREFIX}`)
-   console.log(`   API_URL: ${API_URL}`)
-   console.log(`   Routing: Nginx Proxy Manager routes /api/* to backend`)
-   console.log(`   Environment: ${import.meta.env.MODE}`)
+   console.info("🔧 Frontend API Configuration Loaded:")
+   console.info(`   API_PREFIX: ${API_PREFIX}`)
+   console.info(`   API_URL: ${API_URL}`)
+   console.info(`   Routing: Nginx Proxy Manager routes /api/* to backend`)
+   console.info(`   Environment: ${import.meta.env.MODE}`)
 }
 
 export const api = {
