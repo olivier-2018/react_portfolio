@@ -16,6 +16,7 @@
    },
    "dependencies": {
       "@supabase/supabase-js": "^2.x",
+      "botframework-webchat": "^4.18.0",
       "cors": "^2.8.5",
       "dotenv": "^16.x",
       "express": "^4.x",

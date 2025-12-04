@@ -25,11 +25,13 @@ app.use((req: express.Request, res: express.Response, next: express.NextFunction
 })
 
 // Middleware
-// Use origin: "*", credentials: false to DISABLE cors with credentials
-const corsOrigin = process.env.CORS_ORIGIN || "*"
+// CORS configuration - parse comma-separated origins
+const corsOriginString = process.env.CORS_ORIGIN || "*"
+const corsOriginArray = corsOriginString === "*" ? "*" : corsOriginString.split(",").map((o: string) => o.trim())
+
 app.use(
    cors({
-      origin: corsOrigin,
+      origin: corsOriginArray,
       credentials: true,
    })
 )
@@ -51,7 +53,7 @@ app.use(
                (_req: any, res: any) => `'nonce-${(res as express.Response).locals.nonce}'`,
             ].filter(Boolean) as string[],
             "style-src": ["'self'", "'unsafe-inline'"],
-            "connect-src": ["'self'"],
+            "connect-src": ["'self'", "https://directline.botframework.com"],
             "font-src": ["'self'", "data:"],
             "object-src": ["'none'"],
             "base-uri": ["'self'"],
