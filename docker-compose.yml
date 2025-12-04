@@ -5,9 +5,9 @@ version: "3.8"
 
 services:
    portfolio-backend:
-      # build:
-      #    context: .
-      #    dockerfile: Dockerfile.backend
+      build:
+         context: .
+         dockerfile: Dockerfile.backend
       image: portfolio-backend:dev
       container_name: portfolio-backend
       restart: unless-stopped
@@ -36,9 +36,9 @@ services:
       networks: ["contado_net"]
 
    portfolio-frontend:
-      # build:
-      #    context: .
-      #    dockerfile: Dockerfile.frontend
+      build:
+         context: .
+         dockerfile: Dockerfile.frontend
       image: portfolio-frontend:dev
       restart: unless-stopped
       container_name: portfolio-frontend

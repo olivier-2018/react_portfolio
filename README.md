@@ -122,6 +122,10 @@ docker build -t portfolio-backend:dev -f Dockerfile.backend --no-cache .
 docker network create net_portfolio
 # Start container (check port values match your .env file)
 docker compose -f docker-compose.yml up -d
+
+# Docker Helper
+docker compose up -d --build --force-recreate
+docker compose build --no-cache && docker compose up -d
 ```
 
 ### Development Deployment (Local only)

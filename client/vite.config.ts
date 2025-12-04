@@ -73,6 +73,7 @@ export default defineConfig(({ mode, command }) => {
          "import.meta.env.VITE_EMAILJS_PUBLIC_KEY": JSON.stringify(env.VITE_EMAILJS_PUBLIC_KEY || ""),
          "import.meta.env.VITE_RECAPTCHA_SITE_KEY": JSON.stringify(env.VITE_RECAPTCHA_SITE_KEY || ""),
          "import.meta.env.VITE_USE_RECAPTCHA": JSON.stringify(env.VITE_USE_RECAPTCHA || "false"),
+         "import.meta.env.VITE_GIT_COMMIT_DATE": JSON.stringify(env.VITE_GIT_COMMIT_DATE || ""),
       },
    }
 })
