@@ -47,6 +47,7 @@ services:
       #    - "5173:5173"
       expose:
          # Port exposed Internally
+         # - "${VITE_FRONTEND_PORT}"
          - "5173"
       networks: ["contado_net"]
 

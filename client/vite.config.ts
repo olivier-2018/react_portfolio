@@ -24,12 +24,12 @@ export default defineConfig(({ mode, command }) => {
 
    // Log for debugging
    console.info("\n🔑 Vite Configuration:")
-   console.info(`   Frontend Port: ${frontendPort}`)
-   console.info(`   Backend Port: ${backendPort}`)
-   console.info(`   Backend URL Base: ${backendUrlBase}${isDevMode ? " (enforced for dev mode)" : ""}`)
-   console.info(`   Full Backend URL: ${backendUrl}`)
    console.info(`   Mode: ${isDevMode ? "DEVELOPMENT" : "PRODUCTION"}`)
    console.info(`   reCAPTCHA: ${recaptchaEnabled ? "✅ ENABLED" : "❌ DISABLED"}\n`)
+   console.info(`   Frontend Port: ${frontendPort}`)
+   console.info(`   Backend Port: ${backendPort}`)
+   console.info(`   Backend URL: ${backendUrl}${isDevMode ? " (enforced for dev mode)" : ""}`)
+   // console.info(`   Full Backend URL: ${backendUrl}`)
 
    return {
       base: "/",

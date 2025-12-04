@@ -115,13 +115,13 @@ Second, check the validity of the docker-compose file with regard to:
 
 ```sh
 # Build Frontend Docker image
-docker build -t portfolio-frontend:dev -f Dockerfile.frontend .
+docker build -t portfolio-frontend:dev -f Dockerfile.frontend --no-cache .
 # Build Backend Docker image
-docker build -t portfolio-backend:dev -f Dockerfile.backend .
+docker build -t portfolio-backend:dev -f Dockerfile.backend --no-cache .
 # Create network if not existing
 docker network create net_portfolio
 # Start container (check port values match your .env file)
-docker compose -f docker-compose.yml up -f
+docker compose -f docker-compose.yml up -d
 ```
 
 ### Development Deployment (Local only)

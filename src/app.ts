@@ -25,11 +25,14 @@ app.use((req: express.Request, res: express.Response, next: express.NextFunction
 })
 
 // Middleware
+// Use origin: "*", credentials: false to DISABLE cors with credentials
 const corsOrigin = process.env.CORS_ORIGIN || "*"
-app.use(cors({
-   origin: corsOrigin,
-   credentials: true,
-}))
+app.use(
+   cors({
+      origin: corsOrigin,
+      credentials: true,
+   })
+)
 app.use(
    helmet({
       contentSecurityPolicy: {
