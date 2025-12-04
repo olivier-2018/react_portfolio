@@ -1,23 +1,48 @@
 # Environmental variables
-.env
+# .env
+*.obsolete
 
-# projects asset data
-projects_assets/
-
-# Dev resources
-db_*/
-docker-compose_postgres.yml
-
-# Logs
-logs
-*.log
+# node dependencies
+node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# node.js dependencies
+# Build artifacts
+dist/
+client/dist/
+
+# Logs
+logs/
+*.log
+
+# Version control
+.git/
+.gitignore
+.github/
+
+# Dev tools and configs
+.vscode/
+.prettierrc.json
+jest.config.js
+eslint.config.js
+docker-compose.yml
+docker-compose.prod.yml
+
+# Database
+db_*/
+
+# Testing
+tests/
+
+# Documentation
+README.md
+
+# Obsolete files
+*.obsolete
+
 node_modules
 dist
 dist-ssr

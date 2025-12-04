@@ -1,31 +1,58 @@
+# docker-compose.separate.yml
+# For VPS deployment with separate frontend and backend containers
+
+version: "3.8"
+
 services:
-  portfolio_webapp:
-    image: react_portfolio:latest
-    container_name: react_portfolio
-    restart: unless-stopped
-    networks: ['contado_net']
-    ports:
-      - "5173:5173"
-    volumes:
-      - ./projects_assets/project_movies:/app/src/assets/project_movies
-      - ./projects_assets/project_pictures:/app/src/assets/project_pictures
-    environment:
-      VITE_GIT_COMMIT_DATE: ${VITE_GIT_COMMIT_DATE}
-      VITE_RECAPTCHA_SITE_KEY: ${VITE_RECAPTCHA_SITE_KEY}
-      VITE_RECAPTCHA_SECRET_KEY: ${VITE_RECAPTCHA_SECRET_KEY}
-      VITE_EMAILJS_SERVICE_ID: ${VITE_EMAILJS_SERVICE_ID}
-      VITE_EMAILJS_TEMPLATE_ID: ${VITE_EMAILJS_TEMPLATE_ID}
-      VITE_EMAILJS_PUBLIC_KEY: ${VITE_EMAILJS_PUBLIC_KEY}
-      VITE_DB_SELECT: ${VITE_DB_SELECT}
-      VITE_SUPABASE_URL: ${VITE_SUPABASE_URL}
-      VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY}
-      VITE_POSTGRES_USER: ${VITE_POSTGRES_USER}
-      VITE_POSTGRES_PASSWORD: ${VITE_POSTGRES_PASSWORD}
-      VITE_POSTGRES_DB: ${VITE_POSTGRES_DB}
+   portfolio-backend:
+      build:
+         context: .
+         dockerfile: Dockerfile.backend
+      image: portfolio-backend:dev
+      container_name: portfolio-backend
+      restart: unless-stopped
+      # Host port mapping (uncomment ONLY for local deployment)
+      # ports:
+      #    - "${VITE_BACKEND_PORT}:${VITE_BACKEND_PORT}"
+      expose:
+         # Port exposed Internally
+         - "${VITE_BACKEND_PORT}"
+      environment:
+         NODE_ENV: ${NODE_ENV}
+         VITE_API_PREFIX: ${VITE_API_PREFIX}
+         VITE_BACKEND_PORT: ${VITE_BACKEND_PORT}
+         VITE_DB_SELECT: ${VITE_DB_SELECT}
+         VITE_SUPABASE_URL: ${VITE_SUPABASE_URL}
+         VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY}
+         VITE_POSTGRES_USER: ${VITE_POSTGRES_USER}
+         VITE_POSTGRES_PASSWORD: ${VITE_POSTGRES_PASSWORD}
+         VITE_POSTGRES_DB: ${VITE_POSTGRES_DB}
+         VITE_POSTGRES_HOST: ${VITE_POSTGRES_HOST}
+         VITE_POSTGRES_PORT: ${VITE_POSTGRES_PORT}
+         CORS_ORIGIN: ${CORS_ORIGIN}
+      volumes:
+         - ./projects_assets/project_movies:/app/projects_assets/project_movies:ro
+         - ./projects_assets/project_pictures:/app/projects_assets/project_pictures:ro
+      networks: ["contado_net"]
+
+   portfolio-frontend:
+      build:
+         context: .
+         dockerfile: Dockerfile.frontend
+      image: portfolio-frontend:dev
+      restart: unless-stopped
+      container_name: portfolio-frontend
+      # Host port mapping (uncomment ONLY for local deployment)
+      # ports:
+      #    - "5173:5173"
+      expose:
+         # Port exposed Internally
+         # - "${VITE_FRONTEND_PORT}"
+         - "5173"
+      networks: ["contado_net"]
 
 networks:
-  contado_net:
-    name: contado_net
-    driver: bridge
-    external: true
-
+   contado_net:
+      name: contado_net
+      driver: bridge
+      external: true
