@@ -135,7 +135,7 @@ export function Navbar() {
                      title="Chat with Portfolio Assistant"
                   >
                      <img src="/favicon-32x32.png" alt="Chatbot" className="w-5 h-5 mr-2" />
-                     <span className="hidden lg:inline text-sm font-semibold">Ask Me</span>
+                     <span className="hidden lg:inline text-sm font-semibold">Ask my Portfolio Assistant</span>
                      {/* Pulse ring animation */}
                      <span
                         className="absolute inset-0 rounded-md animate-pulse bg-primary/20"
