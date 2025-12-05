@@ -138,6 +138,7 @@ export function ChatbotWidget({ animationType = "zoom-spring" }: ChatbotWidgetPr
 
       function showFallback() {
          if (isMounted) {
+            const copilotAgentUrl = import.meta.env.VITE_COPILOT_AGENT_URL
             container.innerHTML = `
                <div style="
                   display: flex;
@@ -152,7 +153,7 @@ export function ChatbotWidget({ animationType = "zoom-spring" }: ChatbotWidgetPr
                ">
                   <p style="margin: 0 0 10px 0; font-weight: bold;">Chat with AI Assistant</p>
                   <p style="margin: 0 0 15px 0; font-size: 14px; color: #666;">Open in a new window to chat</p>
-                  <a href="https://copilotstudio.microsoft.com/environments/df7d7b8e-d181-ee0e-a200-e31603502119/bots/cre4a_portfolioChatbot/webchat?__version__=2" target="_blank" rel="noopener noreferrer" style="
+                  <a href="${copilotAgentUrl}" target="_blank" rel="noopener noreferrer" style="
                      background: #0078d4;
                      color: white;
                      padding: 10px 20px;
