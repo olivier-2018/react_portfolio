@@ -35,13 +35,11 @@ export function ChatbotWidget({ animationType = "zoom-spring" }: ChatbotWidgetPr
          try {
             console.log("📡 Fetching Direct Line token from backend...")
 
-            // Determine correct backend URL (use localhost in dev mode)
-            const isDevMode = process.env.NODE_ENV === "development"
-            const backendUrl = isDevMode ? "http://localhost" : import.meta.env.VITE_BACKEND_URL || "http://localhost"
-            const backendPort = import.meta.env.VITE_BACKEND_PORT || "3003"
+            // Use relative URL to go through the reverse proxy (Nginx)
+            // In production: Nginx routes /api/* to backend container
+            // In development: Vite proxy or direct connection via localhost
             const apiPrefix = import.meta.env.VITE_API_PREFIX || "/api/v1"
-
-            const tokenUrl = `${backendUrl}:${backendPort}${apiPrefix}/chatbot/directline-token`
+            const tokenUrl = `${apiPrefix}/chatbot/directline-token`
             console.log(`Fetching from: ${tokenUrl}`)
 
             const tokenResponse = await fetch(tokenUrl, {
