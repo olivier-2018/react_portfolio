@@ -22,7 +22,12 @@ export function HeroSection() {
          skillsSection.scrollIntoView({ behavior: "smooth" })
       }
    }
-
+   const scrollToProjects = () => {
+      const skillsSection = document.getElementById("projects")
+      if (skillsSection) {
+         skillsSection.scrollIntoView({ behavior: "smooth" })
+      }
+   }
    return (
       <section
          id="home"
@@ -51,24 +56,28 @@ export function HeroSection() {
                      isIntersecting || forceVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
                   }`}
                >
+                  <p className="text-xl lg:text-2xl text-primary-foreground mb-8 font-medium">
+                     Welcome to my portfolio.
+                     <br />
+                  </p>
                   <h1 className="text-5xl lg:text-7xl font-bold mb-6 leading-tight">
-                     <span className="bg-gradient-primary bg-clip-text text-transparent">Hey, I'm</span>
+                     <span className="bg-gradient-primary bg-clip-text text-transparent">I'm</span>
                      {/* <br /> */}
                      <span className="text-primary-glow"> Oli !</span>
                   </h1>
 
                   <p className="text-xl lg:text-2xl text-primary-foreground mb-8 font-medium">
-                     I'm a{" "}
+                     a{" "}
                      <span className="bg-gradient-word1 font-semibold bg-clip-text text-transparent">
-                        data scientist
+                        data engineer
                      </span>{" "}
                      ,{" "}
                      <span className="bg-gradient-word2 font-semibold bg-clip-text text-transparent">
-                        mechanical engineer
+                        data scientist
                      </span>{" "}
                      ,{" "}
                      <span className="bg-gradient-word3 font-semibold bg-clip-text text-transparent">
-                        aerodynamicist
+                        mechanical engineer
                      </span>{" "}
                      and{" "}
                      <span className="bg-gradient-word4 font-semibold bg-clip-text text-transparent">
@@ -78,24 +87,23 @@ export function HeroSection() {
                   </p>
 
                   <p className="text-xl lg:text-2xl text-primary-foreground mb-8  font-medium">
-                     My interests range from computer vision, autonomous robotics, deep / machine learning,
-                     mechatronics, digital electronics to aerospace and astrophysics.
+                     I have a wide range of interests including computer vision, deep / machine learning, autonomous
+                     robotics, mechatronics and digital electronics.
                   </p>
 
                   {/* <p className="text-xl lg:text-3xl text-primary-foreground mb-8 font-medium">
               I create innovative solutions that bridge technology and creativity.
             </p> */}
                   <p className="text-xl lg:text-2xl text-primary-foreground mb-8 font-medium">
-                     Welcome to my portfolio.
                      <br />
-                     Feel free to explore my work and connect with me.
+                     Feel free to explore my projects and connect with me.
                   </p>
 
                   <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                      <Button
                         size="lg"
                         className="bg-gradient-primary hover:shadow-glow transition-all duration-300 transform hover:scale-105"
-                        onClick={() => scrollToSkills()}
+                        onClick={() => scrollToProjects()}
                      >
                         Explore My Work
                      </Button>

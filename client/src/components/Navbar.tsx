@@ -130,7 +130,10 @@ export function Navbar() {
 
                   {/* Animated Chatbot Button */}
                   <Button
-                     onClick={() => setIsChatbotOpen(true)}
+                     onClick={() => {
+                        scrollToSection("home")
+                        setTimeout(() => setIsChatbotOpen(true), 1000)
+                     }}
                      className="relative ml-2 px-4 py-2 bg-gradient-to-r from-primary to-secondary hover:shadow-lg hover:shadow-primary/50 transition-all duration-400 animate-pulse"
                      title="Chat with Portfolio Assistant"
                   >
@@ -187,7 +190,10 @@ export function Navbar() {
 
                         {/* Mobile Chatbot Button */}
                         <Button
-                           onClick={() => setIsChatbotOpen(true)}
+                           onClick={() => {
+                              scrollToSection("home")
+                              setTimeout(() => setIsChatbotOpen(true), 1000)
+                           }}
                            className="bg-gradient-to-r from-primary to-secondary hover:shadow-lg transition-all duration-300 ml-auto"
                            title="Chat with Portfolio Assistant"
                         >
