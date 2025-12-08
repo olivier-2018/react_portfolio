@@ -68,27 +68,31 @@ export function HeroSection() {
 
                   <p className="text-xl lg:text-2xl text-primary-foreground mb-8 font-medium">
                      a{" "}
-                     <span className="bg-gradient-word1 font-semibold bg-clip-text text-transparent">
-                        data engineer
-                     </span>{" "}
-                     ,{" "}
-                     <span className="bg-gradient-word2 font-semibold bg-clip-text text-transparent">
+                     <span className="bg-gradient-word5 font-semibold bg-clip-text text-transparent">
                         data scientist
-                     </span>{" "}
-                     ,{" "}
+                     </span>
+                     {", "}
+                     {/* <span className="bg-gradient-word2 font-semibold bg-clip-text text-transparent"></span>{" "}
+                     {", "} */}
                      <span className="bg-gradient-word3 font-semibold bg-clip-text text-transparent">
-                        mechanical engineer
-                     </span>{" "}
-                     and{" "}
+                        DevOps & data engineer
+                     </span>
+                     {", "}
                      <span className="bg-gradient-word4 font-semibold bg-clip-text text-transparent">
+                        mechanical engineer
+                     </span>
+                     {", "}
+                     and{" "}
+                     <span className="bg-gradient-word1 font-semibold bg-clip-text text-transparent">
                         robotics enthusiast
                      </span>
                      .{" "}
                   </p>
 
-                  <p className="text-xl lg:text-2xl text-primary-foreground mb-8  font-medium">
-                     I have a wide range of interests including computer vision, deep / machine learning, autonomous
-                     robotics, mechatronics and digital electronics.
+                  <p className="text-2xl lg:text-2xl text-primary-foreground mb-8  font-medium">
+                     I have a wide range of interests including agentic AI, deep / machine learning,
+                     <br />
+                     computer vision, autonomous robotics, mechatronics and digital electronics.
                   </p>
 
                   {/* <p className="text-xl lg:text-3xl text-primary-foreground mb-8 font-medium">
@@ -97,6 +101,7 @@ export function HeroSection() {
                   <p className="text-xl lg:text-2xl text-primary-foreground mb-8 font-medium">
                      <br />
                      Feel free to explore my projects and connect with me.
+                     <br />I am also available for freelance opportunities!
                   </p>
 
                   <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
