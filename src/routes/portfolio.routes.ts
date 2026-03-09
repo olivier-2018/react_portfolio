@@ -28,4 +28,39 @@ router.post("/feedbacks", submitFeedback) // Assuming you have a submitFeedbacks
 router.get("/projects/likes", getProjectLikes)
 router.post("/projects/likes", incrementProjectLikes)
 
+// Copilot Studio Direct Line token endpoint (proxied through backend to bypass CORS)
+router.post("/chatbot/directline-token", async (req: express.Request, res: express.Response) => {
+   try {
+      const directLineSecret = process.env.VITE_COPILOT_DIRECTLINE_SECRET
+
+      if (!directLineSecret) {
+         return res.status(500).json({
+            error: "Direct Line secret not configured",
+         })
+      }
+
+      const tokenResponse = await fetch("https://directline.botframework.com/v3/directline/tokens/generate", {
+         method: "POST",
+         headers: {
+            Authorization: `Bearer ${directLineSecret}`,
+            "Content-Type": "application/json",
+         },
+      })
+
+      if (!tokenResponse.ok) {
+         return res.status(tokenResponse.status).json({
+            error: `Failed to get Direct Line token: ${tokenResponse.statusText}`,
+         })
+      }
+
+      const token = await tokenResponse.json()
+      res.json(token)
+   } catch (error) {
+      console.error("Error fetching Direct Line token:", error)
+      res.status(500).json({
+         error: "Failed to fetch Direct Line token",
+      })
+   }
+})
+
 export default router
