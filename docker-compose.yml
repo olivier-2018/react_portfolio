@@ -3,10 +3,9 @@ services:
       build:
          context: .
          dockerfile: Dockerfile.backend
-      image: portfolio-backend:dev
+      image: portfolio-backend:prod
       container_name: portfolio-backend
       restart: unless-stopped
-      # Host port mapping (uncomment ONLY for local deployment)
       # ports:
       #    - "${VITE_BACKEND_PORT}:${VITE_BACKEND_PORT}"
       expose:
@@ -34,17 +33,42 @@ services:
       build:
          context: .
          dockerfile: Dockerfile.frontend
-      image: portfolio-frontend:dev
+      image: portfolio-frontend:prod
       restart: unless-stopped
       container_name: portfolio-frontend
-      # Host port mapping (uncomment ONLY for local deployment)
+      # Host port mapping: COMMENTED OUT - accessed via nginx reverse proxy instead
+      # Uncomment only if running without nginx (port exposed via nginx when using local profile)
       # ports:
-      #    - "5173:5173"
+      #    - "${VITE_FRONTEND_PORT}:${VITE_FRONTEND_PORT}"
       expose:
          # Port exposed Internally
-         # - "${VITE_FRONTEND_PORT}"
-         - "5173"
+         - "${VITE_FRONTEND_PORT}"
       networks: ["contado_net"]
+
+   # Nginx reverse proxy - ONLY runs with --profile local
+   # Routes requests to frontend and /api/* to backend
+   # Used for local Docker deployment to simulate production nginx setup
+   nginx:
+      image: nginx:alpine
+      container_name: portfolio-nginx
+      restart: unless-stopped
+      profiles: ["local"]
+      ports:
+         - "${VITE_FRONTEND_PORT}:5173"
+      expose:
+         - "5173"
+      volumes:
+         - ./nginx.conf.template:/etc/nginx/nginx.conf.template:ro
+         - ./nginx-entrypoint.sh:/docker-entrypoint.d/00-entrypoint.sh:ro
+      environment:
+         VITE_FRONTEND_PORT: ${VITE_FRONTEND_PORT}
+         VITE_BACKEND_PORT: ${VITE_BACKEND_PORT}
+         NGINX_PORT: 5173
+      depends_on:
+         - portfolio-frontend
+         - portfolio-backend
+      networks: ["contado_net"]
+      entrypoint: ["sh", "/docker-entrypoint.d/00-entrypoint.sh"]
 
 networks:
    contado_net:

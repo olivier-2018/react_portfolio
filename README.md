@@ -12,6 +12,7 @@ This website is a modern, interactive portfolio designed to showcase your techni
 -  **Client Testimonials:** Constant-speed scrolling feedback carousel with popup details.
 -  **Contact & Feedback:** Dual-form section for direct contact or submitting feedback, with instant notifications.
 -  **Responsive Design:** Looks great on all devices.
+-  **Bot Assistant:** Ask any information about my profile tdirectly to the Bot.
 
 ---
 
@@ -21,6 +22,7 @@ This website is a modern, interactive portfolio designed to showcase your techni
 
 -  [Node.js](https://nodejs.org/) (v22+ recommended)
 -  [npm](https://www.npmjs.com/) (comes with Node.js)
+- nvm (optional)
 
 ### Local Development
 
@@ -36,8 +38,11 @@ cd react_portfolio
 nvm install v22
 nvm use lts/jod
 
-# 4. Install package dependencies
+# 4. Install package dependencies for frontend & backend
 npm install
+cd client
+npm install
+cd ..
 
 # 5. Set your environmental variable
 cp .env.sample .env
@@ -51,12 +56,6 @@ npm run dev
 ```
 
 ## Frontend and Backend Interactions
-
-## In Development
-
--  In Development Mode, the Frontend and Backend servers are both running live and concurrently but on different ports (specified in .env.sample).
--  The ensures a smooth and interactive development session where changes to either frontend and backend are immediately visible on the LIVE server.
--  API calls from the frontend to the backend can be monitored in the browser console or in the server logs.
 
 **Visual Flow:**
 
@@ -84,60 +83,7 @@ Response sent back to Frontend
 React App updates UI with new data
 ```
 
-### In Production
-
--  In Production, the Frontend and backend are build into separate docker containers and must deployed in the same docker network.
--  The frontend (REACT VITE) is listening on port VITE_FRONTEND_PORT (5173 by default)
--  The Backend (Express server) runs on port VITE_BACKEND_PORT (3003 by default) and serves Frontend requests internally.
-
--  If deployed locally,
-
-   -  you will first need to create a docker network, then update the docker-compose file with the network name.
-   -  You will then need to ensure the port mapping is uncommented in the docker-compose file to expose the frontend and/or the backend to your localhost.
-   -  Providing you have build the docker images using the respective Dockerfiles, you will be able to deploy bothe containers using the docker-compose file.
-
--  If deployed on a VPS, possibly behind a nginx reverse proxy (running in the same docker network):
-   -  it is recommended to comment out the port binding to isolate the container services to the docker network.
-   -  you may want to update the network name to match your nginx docker network
-
-**Warning** Regardless of deployment destination, you will need to edit the Dockerfiles to match the ports the container are listening to, to match the value specified in the .env.sample.
-
-## Deployments
-
-First check the validity of the Dockerfiles with regard to port mapping.  
-Second, check the validity of the docker-compose file with regard to:
-
--  docker image names & tags
--  port mapping enabled for local deployment only
--  docker network name
-
-### Production Deployments (Local or on VPS)
-
-```sh
-# Build Frontend Docker image
-docker build -t portfolio-frontend:dev -f Dockerfile.frontend --no-cache .
-# Build Backend Docker image
-docker build -t portfolio-backend:dev -f Dockerfile.backend --no-cache .
-# Create network if not existing
-docker network create net_portfolio
-# Start container (check port values match your .env file)
-docker compose -f docker-compose.yml up -d
-
-# Docker Helper
-docker compose up -d --build --force-recreate
-docker compose build --no-cache && docker compose up -d
-```
-
-### Development Deployment (Local only)
-
-The Frontend & Backend development servers are launched on their respective ports, as specified in the .env file.
-
-```sh
-# Build and deploy
-npm run dev
-```
-
-### Testing
+## Testing
 
 ```sh
 # For backend testing:
@@ -147,13 +93,66 @@ npm test
 npx testcafe chromium:headless ./tests/api-client_e2e.ts
 ```
 
-## Nginx
+## Deployments
 
-### NPM
+The portfolio can be deployed in 3 ways:
+- LOCAL DEVELOPMENT mode --> Both Frontend and Backend servers are running live concurrently locally but on different ports (specified in .env.sample).
+- LOCAL PRODUCTION mode --> the Frontend and backend servers are build into separate docker containers and deployed locally together with a local nginx reverse proxy server to simulate a real production environment.
+- VPS PRODUCTION mode --> the Frontend and backend containers are deployed remotely, assuming a nginx reverse proxy server is already configured.
+
+
+### 1. Local Development deployment
+
+Simply type:
+```sh
+# Build and deploy
+npm run dev
+```
+**Notes:**
+-  The Frontend & Backend development servers are launched concurrently on their respective ports, as specified in the .env file. 
+-  This ensures a smooth and interactive development session where changes to either the frontend or backend are immediately visible on the LIVE server.
+-  API calls from the frontend to the backend can be monitored in the browser console or in the server logs.
+
+
+### 2. Local Production mode
+
+Simply run the sequence:
+```sh
+# Create network if not existing
+docker network create contado_net
+# Build Frontend Docker image
+docker build -t portfolio-frontend:prod -f Dockerfile.frontend --no-cache .
+# Build Backend Docker image
+docker build -t portfolio-backend:prod -f Dockerfile.backend --no-cache .
+# Start containers (with local profile)
+docker compose -f docker-compose.yml  --profile local up -d
+
+# Docker Helper
+docker compose up -d --build --force-recreate
+docker compose build --no-cache && docker compose up -d
+```
+**Notes:**
+-  In Production, the Frontend and backend are build into separate docker containers and must deployed in the same docker network.
+-  The frontend (REACT VITE) is listening on port VITE_FRONTEND_PORT (5173 by default)
+-  The Backend (Express server) runs on port VITE_BACKEND_PORT (3003 by default) and serves Frontend requests internally.
+
+### 3. VPS (remote) Production mode
+
+Simply run the sequence:
+```sh
+# Create network and Build conainer images as above
+# Start containers
+docker compose -f docker-compose.yml  up -d
+```
+**Notes:**
+-  This assume a reverse proxy server is already setup on the VPS.
+
+
+**NPM setup on VPS (optional)**
 
 Steps in Nginx Proxy Manager UI:
 
--  Go to your existing proxy host (the one for portfolio.brontechsolutions.ch)
+-  Go to your existing proxy host 
 -  Click on it to edit
 -  Go to the "Custom Locations" tab
 -  Click "Add Custom Location" and add:
@@ -163,7 +162,7 @@ Steps in Nginx Proxy Manager UI:
 -  Forward Port: 3003
 -  Check: "Block Common Exploits"
 
-### nginx server
+**nginx server setup on VPS (optional)**
 
 ```sh
 server {
@@ -198,4 +197,4 @@ server_name portfolio.brontechsolutions.ch;
 ## TODOs
 
 -  implement dynamic server for local postgres queries and optimization of static content serving
--  implement Bot Assistant
+
