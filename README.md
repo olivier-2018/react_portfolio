@@ -48,10 +48,13 @@ cd ..
 cp .env.sample .env
 # then update .env with your own data
 
-# 6. Start the development server
+# 6. Configure Database Selection
+# See "Database Selection" section below for more details
+
+# 7. Start the development server
 npm run dev
 
-# 7. Check portfolio webapp on browser on localhost:5173 (frontend) or localhost:3003 (backend)
+# 8. Check portfolio webapp on browser on localhost:5173 (frontend) or localhost:3003 (backend)
 
 ```
 
@@ -83,8 +86,59 @@ Response sent back to Frontend
 React App updates UI with new data
 ```
 
-## Testing
+## Database Selection
 
+This project supports two database backends for storing portfolio data (skills, projects, feedback). Select one via the `VITE_DB_SELECT` environment variable in your `.env` file:
+
+The DB schema is available in the postgresDB_init folder.
+Follow instructions in the README file in the same folder to setup the postgres DB.
+
+
+### Option 1: Supabase (Default & Recommended for Production)
+
+**Configuration:**
+```env
+VITE_DB_SELECT=supabase
+VITE_SUPABASE_URL=<your_supabase_url>
+VITE_SUPABASE_ANON_KEY=<your_supabase_key>
+VITE_DB_SELECT=postgres
+VITE_POSTGRES_USER=<your_postgres_user>
+VITE_POSTGRES_PASSWORD=<your_postgres_password>
+VITE_POSTGRES_DB=<database_name>
+VITE_POSTGRES_HOST=localhost
+VITE_POSTGRES_PORT=5432
+```
+
+**Prerequisites:**
+- Supabase account with credentials
+- Database tables: `skills`, `skill_categories`, `projects`, `project_categories`, `customer_feedbacks`
+
+**Usage:**
+```sh
+npm run dev        # Frontend & Backend with Supabase
+```
+
+### Option 2: local PostgreSQL (Docker Container)
+
+**Configuration:**
+```env
+VITE_DB_SELECT=local
+VITE_POSTGRES_USER=<your_postgres_user>
+VITE_POSTGRES_PASSWORD=<your_postgres_password>
+VITE_POSTGRES_DB=<database_name>
+VITE_POSTGRES_HOST=<docker_container_name>
+VITE_POSTGRES_PORT=5432
+```
+
+**Prerequisites:**
+- Docker with PostgreSQL container running (e.g., `postgres15`)
+- Database tables created with same schema as Supabase
+- Container must be accessible on the configured host and port
+
+**Switching Backends:**
+Simply update `VITE_DB_SELECT` in your `.env` file and restart the development server (Ctrl+C and `npm run dev`).
+
+## Testing
 ```sh
 # For backend testing:
 npm test
@@ -112,6 +166,7 @@ npm run dev
 -  The Frontend & Backend development servers are launched concurrently on their respective ports, as specified in the .env file. 
 -  This ensures a smooth and interactive development session where changes to either the frontend or backend are immediately visible on the LIVE server.
 -  API calls from the frontend to the backend can be monitored in the browser console or in the server logs.
+-  Database backend is determined by `VITE_DB_SELECT` in your `.env` file (see "Database Selection" section above).
 
 
 ### 2. Local Production mode
@@ -135,6 +190,10 @@ docker compose build --no-cache && docker compose up -d
 -  In Production, the Frontend and backend are build into separate docker containers and must deployed in the same docker network.
 -  The frontend (REACT VITE) is listening on port VITE_FRONTEND_PORT (5173 by default)
 -  The Backend (Express server) runs on port VITE_BACKEND_PORT (3003 by default) and serves Frontend requests internally.
+-  Database backend is determined by `VITE_DB_SELECT` in your `.env` file:
+   - Use `VITE_DB_SELECT=supabase` for Supabase backend (recommended for production)
+   - Use `VITE_DB_SELECT=local` for local PostgreSQL Docker container
+-  Environment variables are passed to containers via docker-compose.yml (see "Environment" section)
 
 ### 3. VPS (remote) Production mode
 
@@ -145,7 +204,8 @@ Simply run the sequence:
 docker compose -f docker-compose.yml  up -d
 ```
 **Notes:**
--  This assume a reverse proxy server is already setup on the VPS.
+-  This assumes a reverse proxy server is already setup on the VPS.
+-  Use `VITE_DB_SELECT=supabase` in production (local PostgreSQL option is for development only)
 
 
 **NPM setup on VPS (optional)**

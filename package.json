@@ -23,6 +23,7 @@
       "express-validator": "^7.x",
       "helmet": "^7.x",
       "morgan": "^1.x",
+      "pg": "^8.x",
       "winston": "^3.17.0"
    },
    "devDependencies": {
@@ -32,6 +33,7 @@
       "@types/jest": "^29.x",
       "@types/morgan": "^1.x",
       "@types/node": "^20.x",
+      "@types/pg": "^8.x",
       "@types/supertest": "^2.x",
       "@typescript-eslint/eslint-plugin": "^6.x",
       "@typescript-eslint/parser": "^6.x",
@@ -39,6 +41,7 @@
       "eslint": "^8.x",
       "jest": "^29.x",
       "nodemon": "^3.1.10",
+      "supabase": "^2.78.1",
       "supertest": "^6.x",
       "testcafe": "^3.7.2",
       "ts-jest": "^29.x",
