@@ -48,10 +48,13 @@ cd ..
 cp .env.sample .env
 # then update .env with your own data
 
-# 6. Start the development server
+# 6. Configure Database Selection
+# See "Database Selection" section below for more details
+
+# 7. Start the development server
 npm run dev
 
-# 7. Check portfolio webapp on browser on localhost:5173 (frontend) or localhost:3003 (backend)
+# 8. Check portfolio webapp on browser on localhost:5173 (frontend) or localhost:3003 (backend)
 
 ```
 
@@ -83,8 +86,58 @@ Response sent back to Frontend
 React App updates UI with new data
 ```
 
-## Testing
+## Database Selection
 
+This project supports two database backends for storing portfolio data (skills, projects, feedback).  
+Select one via the `VITE_DB_SELECT` environment variable in the `.env` file:
+
+The DB schema is available in the postgresDB_init folder.
+
+Based on you selection, run the docker compose with the appropriate profile (see below).
+
+
+### Option 1: Supabase 
+
+**Configuration:**
+```env
+VITE_DB_SELECT=supabase
+VITE_SUPABASE_URL=<your_supabase_url>
+VITE_SUPABASE_ANON_KEY=<your_supabase_key>
+
+VITE_POSTGRES_USER=<your_postgres_user>
+VITE_POSTGRES_PASSWORD=<your_postgres_password>
+VITE_POSTGRES_DB=<database_name>
+VITE_POSTGRES_HOST=localhost
+VITE_POSTGRES_PORT=5432
+```
+
+**Prerequisites:**
+- Supabase account with project credentials.  
+- Database tables: `skills`, `skill_categories`, `projects`, `project_categories`, `customer_feedbacks`.  
+- Tables schemas as defined in postgresDB_init/local-db-init.sql.    
+
+
+### Option 2: local PostgreSQL (Docker Container)
+
+**Configuration:**
+```env
+VITE_DB_SELECT=local
+VITE_POSTGRES_USER=<your_postgres_user>
+VITE_POSTGRES_PASSWORD=<your_postgres_password>
+VITE_POSTGRES_DB=<database_name>
+VITE_POSTGRES_HOST=<docker_container_name>
+VITE_POSTGRES_PORT=5432
+```
+
+**Prerequisites:**
+- Docker with PostgreSQL container running (e.g., `postgres15`)
+- Database tables created with same schema as Supabase
+- Container must be accessible on the configured host and port
+
+**Usage**
+See the various deployment modes.  
+
+## Testing
 ```sh
 # For backend testing:
 npm test
@@ -100,18 +153,23 @@ The portfolio can be deployed in 3 ways:
 - LOCAL PRODUCTION mode --> the Frontend and backend servers are build into separate docker containers and deployed locally together with a local nginx reverse proxy server to simulate a real production environment.
 - VPS PRODUCTION mode --> the Frontend and backend containers are deployed remotely, assuming a nginx reverse proxy server is already configured.
 
+In any of the above the backend DB can be selected to be:  
+- delployed in supabase.  
+- deployed in a local docker container.  
 
 ### 1. Local Development deployment
 
 Simply type:
 ```sh
+# Launch the local DB (if not using supabase)
+docker compose --profile local-postgres up portfolio-postgres -d
 # Build and deploy
 npm run dev
 ```
 **Notes:**
--  The Frontend & Backend development servers are launched concurrently on their respective ports, as specified in the .env file. 
--  This ensures a smooth and interactive development session where changes to either the frontend or backend are immediately visible on the LIVE server.
+-  The Frontend & Backend development servers are launched concurrently on their respective ports, as specified in the .env file. Any change to either the frontend or backend is visible immediately on the LIVE server.
 -  API calls from the frontend to the backend can be monitored in the browser console or in the server logs.
+-  Database backend is determined by `VITE_DB_SELECT` in your `.env` file (see "Database Selection" section above).
 
 
 ### 2. Local Production mode
@@ -124,8 +182,10 @@ docker network create contado_net
 docker build -t portfolio-frontend:prod -f Dockerfile.frontend --no-cache .
 # Build Backend Docker image
 docker build -t portfolio-backend:prod -f Dockerfile.backend --no-cache .
-# Start containers (with local profile)
-docker compose -f docker-compose.yml  --profile local up -d
+# Start containers using supabase DB and a local nginx reverse proxy
+docker compose -f docker-compose.yml  --profile local-nginx up -d
+# or using a local docker postgres DB (if not using supabase)
+docker compose -f docker-compose.yml  --profile local-nginx  --profile local-postgres up -d
 
 # Docker Helper
 docker compose up -d --build --force-recreate
@@ -135,56 +195,30 @@ docker compose build --no-cache && docker compose up -d
 -  In Production, the Frontend and backend are build into separate docker containers and must deployed in the same docker network.
 -  The frontend (REACT VITE) is listening on port VITE_FRONTEND_PORT (5173 by default)
 -  The Backend (Express server) runs on port VITE_BACKEND_PORT (3003 by default) and serves Frontend requests internally.
+-  Database backend is determined by `VITE_DB_SELECT` in your `.env` file:
+   - Use `VITE_DB_SELECT=supabase` for Supabase backend (recommended for production)
+   - Use `VITE_DB_SELECT=local` for local PostgreSQL Docker container
+-  Environment variables are passed to containers via docker-compose.yml (see "Environment" section)
 
 ### 3. VPS (remote) Production mode
 
 Simply run the sequence:
 ```sh
-# Create network and Build conainer images as above
-# Start containers
-docker compose -f docker-compose.yml  up -d
+# Create network if not existing
+docker network create contado_net
+# Build Frontend Docker image
+docker build -t portfolio-frontend:prod -f Dockerfile.frontend --no-cache .
+# Build Backend Docker image
+docker build -t portfolio-backend:prod -f Dockerfile.backend --no-cache .
+# Start containers using supabase
+docker compose -f docker-compose.yml  up -d   
+# or using a local docker postgres DB (if not using supabase)
+docker compose -f docker-compose.yml --profile local-postgres up -d
 ```
 **Notes:**
--  This assume a reverse proxy server is already setup on the VPS.
+-  This assumes a reverse proxy server is already setup on the VPS.
+-  Use --profile local-postgres if you want to setup a local postgres DB in production 
 
-
-**NPM setup on VPS (optional)**
-
-Steps in Nginx Proxy Manager UI:
-
--  Go to your existing proxy host 
--  Click on it to edit
--  Go to the "Custom Locations" tab
--  Click "Add Custom Location" and add:
--  Location: /api
--  Scheme: http://
--  Forward Hostname/IP: portfolio-backend
--  Forward Port: 3003
--  Check: "Block Common Exploits"
-
-**nginx server setup on VPS (optional)**
-
-```sh
-server {
-listen 443 ssl http2;
-server_name portfolio.brontechsolutions.ch;
-
-    ssl_certificate ...;
-    ssl_certificate_key ...;
-
-    # Serve frontend
-    location / {
-        proxy_pass http://portfolio-frontend:5173;
-    }
-
-    # Proxy API calls to backend (this is the missing piece!)
-    location /api/ {
-        proxy_pass http://portfolio-backend:3003;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-    }
-}
-```
 
 ## Tech Stack
 
@@ -195,6 +229,5 @@ server_name portfolio.brontechsolutions.ch;
 -  shadcn-ui
 
 ## TODOs
-
--  implement dynamic server for local postgres queries and optimization of static content serving
+NA
 
