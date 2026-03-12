@@ -88,20 +88,22 @@ React App updates UI with new data
 
 ## Database Selection
 
-This project supports two database backends for storing portfolio data (skills, projects, feedback). Select one via the `VITE_DB_SELECT` environment variable in your `.env` file:
+This project supports two database backends for storing portfolio data (skills, projects, feedback).  
+Select one via the `VITE_DB_SELECT` environment variable in the `.env` file:
 
 The DB schema is available in the postgresDB_init folder.
-Follow instructions in the README file in the same folder to setup the postgres DB.
+
+Based on you selection, run the docker compose with the appropriate profile (see below).
 
 
-### Option 1: Supabase (Default & Recommended for Production)
+### Option 1: Supabase 
 
 **Configuration:**
 ```env
 VITE_DB_SELECT=supabase
 VITE_SUPABASE_URL=<your_supabase_url>
 VITE_SUPABASE_ANON_KEY=<your_supabase_key>
-VITE_DB_SELECT=postgres
+
 VITE_POSTGRES_USER=<your_postgres_user>
 VITE_POSTGRES_PASSWORD=<your_postgres_password>
 VITE_POSTGRES_DB=<database_name>
@@ -110,13 +112,10 @@ VITE_POSTGRES_PORT=5432
 ```
 
 **Prerequisites:**
-- Supabase account with credentials
-- Database tables: `skills`, `skill_categories`, `projects`, `project_categories`, `customer_feedbacks`
+- Supabase account with project credentials.  
+- Database tables: `skills`, `skill_categories`, `projects`, `project_categories`, `customer_feedbacks`.  
+- Tables schemas as defined in postgresDB_init/local-db-init.sql.    
 
-**Usage:**
-```sh
-npm run dev        # Frontend & Backend with Supabase
-```
 
 ### Option 2: local PostgreSQL (Docker Container)
 
@@ -135,8 +134,8 @@ VITE_POSTGRES_PORT=5432
 - Database tables created with same schema as Supabase
 - Container must be accessible on the configured host and port
 
-**Switching Backends:**
-Simply update `VITE_DB_SELECT` in your `.env` file and restart the development server (Ctrl+C and `npm run dev`).
+**Usage**
+See the various deployment modes.  
 
 ## Testing
 ```sh
@@ -154,6 +153,9 @@ The portfolio can be deployed in 3 ways:
 - LOCAL PRODUCTION mode --> the Frontend and backend servers are build into separate docker containers and deployed locally together with a local nginx reverse proxy server to simulate a real production environment.
 - VPS PRODUCTION mode --> the Frontend and backend containers are deployed remotely, assuming a nginx reverse proxy server is already configured.
 
+In any of the above the backend DB can be selected to be:  
+- delployed in supabase.  
+- deployed in a local docker container.  
 
 ### 1. Local Development deployment
 
@@ -182,7 +184,7 @@ docker build -t portfolio-frontend:prod -f Dockerfile.frontend --no-cache .
 docker build -t portfolio-backend:prod -f Dockerfile.backend --no-cache .
 # Start containers using supabase DB and a local nginx reverse proxy
 docker compose -f docker-compose.yml  --profile local-nginx up -d
-# or using a local docker postgres DB
+# or using a local docker postgres DB (if not using supabase)
 docker compose -f docker-compose.yml  --profile local-nginx  --profile local-postgres up -d
 
 # Docker Helper
@@ -210,7 +212,7 @@ docker build -t portfolio-frontend:prod -f Dockerfile.frontend --no-cache .
 docker build -t portfolio-backend:prod -f Dockerfile.backend --no-cache .
 # Start containers using supabase
 docker compose -f docker-compose.yml  up -d   
-# or using a local docker postgres DB
+# or using a local docker postgres DB (if not using supabase)
 docker compose -f docker-compose.yml --profile local-postgres up -d
 ```
 **Notes:**
