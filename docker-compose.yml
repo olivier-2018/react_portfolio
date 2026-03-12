@@ -6,6 +6,8 @@ services:
       image: portfolio-backend:prod
       container_name: portfolio-backend
       restart: unless-stopped
+      depends_on:
+         - wait_local_postgres
       # ports:
       #    - "${VITE_BACKEND_PORT}:${VITE_BACKEND_PORT}"
       expose:
@@ -27,15 +29,17 @@ services:
       volumes:
          - ./projects_assets/project_movies:/app/projects_assets/project_movies:ro
          - ./projects_assets/project_pictures:/app/projects_assets/project_pictures:ro
-      networks: ["contado_net"]
+      networks: [ "contado_net" ]
 
    portfolio-frontend:
       build:
          context: .
          dockerfile: Dockerfile.frontend
       image: portfolio-frontend:prod
-      restart: unless-stopped
       container_name: portfolio-frontend
+      restart: unless-stopped
+      depends_on:
+         - wait_local_postgres
       # Host port mapping: COMMENTED OUT - accessed via nginx reverse proxy instead
       # Uncomment only if running without nginx (port exposed via nginx when using local profile)
       # ports:
@@ -43,16 +47,25 @@ services:
       expose:
          # Port exposed Internally
          - "${VITE_FRONTEND_PORT}"
-      networks: ["contado_net"]
+      networks: [ "contado_net" ]
 
-   # Nginx reverse proxy - ONLY runs with --profile local
-   # Routes requests to frontend and /api/* to backend
+   # Proxy service for local-nginx profile
+   wait_local_nginx:
+      image: alpine
+      container_name: wait_local_nginx
+      networks: [ "contado_net" ]
+      command: [ "sh", "-c", "echo profile-local-nginx active" ]
+      profiles: [ "local-nginx" ]
+      depends_on:
+         - nginx
+
+   # Nginx reverse proxy - ONLY runs with --profile local-nginx
    # Used for local Docker deployment to simulate production nginx setup
    nginx:
       image: nginx:alpine
       container_name: portfolio-nginx
       restart: unless-stopped
-      profiles: ["local"]
+      profiles: [ "local-nginx" ]
       ports:
          - "${VITE_FRONTEND_PORT}:5173"
       expose:
@@ -67,8 +80,39 @@ services:
       depends_on:
          - portfolio-frontend
          - portfolio-backend
-      networks: ["contado_net"]
-      entrypoint: ["sh", "/docker-entrypoint.d/00-entrypoint.sh"]
+      networks: [ "contado_net" ]
+      entrypoint: [ "sh", "/docker-entrypoint.d/00-entrypoint.sh" ]
+
+   # Proxy service for local-postgres profile
+   wait_local_postgres:
+      image: alpine
+      container_name: wait_local_postgres
+      networks: [ "contado_net" ]
+      command: [ "sh", "-c", "echo profile-local-postgres active" ]
+      profiles: [ "local-postgres" ]
+      depends_on:
+         - portfolio-postgres
+
+   portfolio-postgres:
+      image: postgres:15.17-alpine3.23
+      container_name: ${VITE_POSTGRES_HOST}
+      restart: unless-stopped
+      profiles: [ "local-postgres" ]
+      environment:
+         POSTGRES_USER: ${VITE_POSTGRES_USER}
+         POSTGRES_PASSWORD: ${VITE_POSTGRES_PASSWORD}
+         POSTGRES_DB: ${VITE_POSTGRES_DB}
+      ports:
+         - "${VITE_POSTGRES_PORT}:5432"
+      volumes:
+         - ./postgres_data:/var/lib/postgresql/data
+         - ./postgresDB_init:/docker-entrypoint-initdb.d:ro
+      networks: [ "contado_net" ]
+      healthcheck:
+         test: [ "CMD-SHELL", "pg_isready -U ${VITE_POSTGRES_USER} -d ${VITE_POSTGRES_DB} && psql -U ${VITE_POSTGRES_USER} -d ${VITE_POSTGRES_DB} -c '\\dt public.customer_feedbacks' | grep -q customer_feedbacks" ]
+         interval: 10s
+         timeout: 5s
+         retries: 5
 
 networks:
    contado_net:

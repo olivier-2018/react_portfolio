@@ -159,12 +159,13 @@ The portfolio can be deployed in 3 ways:
 
 Simply type:
 ```sh
+# Launch the local DB (if not using supabase)
+docker compose --profile local-postgres up portfolio-postgres -d
 # Build and deploy
 npm run dev
 ```
 **Notes:**
--  The Frontend & Backend development servers are launched concurrently on their respective ports, as specified in the .env file. 
--  This ensures a smooth and interactive development session where changes to either the frontend or backend are immediately visible on the LIVE server.
+-  The Frontend & Backend development servers are launched concurrently on their respective ports, as specified in the .env file. Any change to either the frontend or backend is visible immediately on the LIVE server.
 -  API calls from the frontend to the backend can be monitored in the browser console or in the server logs.
 -  Database backend is determined by `VITE_DB_SELECT` in your `.env` file (see "Database Selection" section above).
 
@@ -179,8 +180,10 @@ docker network create contado_net
 docker build -t portfolio-frontend:prod -f Dockerfile.frontend --no-cache .
 # Build Backend Docker image
 docker build -t portfolio-backend:prod -f Dockerfile.backend --no-cache .
-# Start containers (with local profile)
-docker compose -f docker-compose.yml  --profile local up -d
+# Start containers using supabase DB and a local nginx reverse proxy
+docker compose -f docker-compose.yml  --profile local-nginx up -d
+# or using a local docker postgres DB
+docker compose -f docker-compose.yml  --profile local-nginx  --profile local-postgres up -d
 
 # Docker Helper
 docker compose up -d --build --force-recreate
@@ -199,52 +202,21 @@ docker compose build --no-cache && docker compose up -d
 
 Simply run the sequence:
 ```sh
-# Create network and Build conainer images as above
-# Start containers
-docker compose -f docker-compose.yml  up -d
+# Create network if not existing
+docker network create contado_net
+# Build Frontend Docker image
+docker build -t portfolio-frontend:prod -f Dockerfile.frontend --no-cache .
+# Build Backend Docker image
+docker build -t portfolio-backend:prod -f Dockerfile.backend --no-cache .
+# Start containers using supabase
+docker compose -f docker-compose.yml  up -d   
+# or using a local docker postgres DB
+docker compose -f docker-compose.yml --profile local-postgres up -d
 ```
 **Notes:**
 -  This assumes a reverse proxy server is already setup on the VPS.
--  Use `VITE_DB_SELECT=supabase` in production (local PostgreSQL option is for development only)
+-  Use --profile local-postgres if you want to setup a local postgres DB in production 
 
-
-**NPM setup on VPS (optional)**
-
-Steps in Nginx Proxy Manager UI:
-
--  Go to your existing proxy host 
--  Click on it to edit
--  Go to the "Custom Locations" tab
--  Click "Add Custom Location" and add:
--  Location: /api
--  Scheme: http://
--  Forward Hostname/IP: portfolio-backend
--  Forward Port: 3003
--  Check: "Block Common Exploits"
-
-**nginx server setup on VPS (optional)**
-
-```sh
-server {
-listen 443 ssl http2;
-server_name portfolio.brontechsolutions.ch;
-
-    ssl_certificate ...;
-    ssl_certificate_key ...;
-
-    # Serve frontend
-    location / {
-        proxy_pass http://portfolio-frontend:5173;
-    }
-
-    # Proxy API calls to backend (this is the missing piece!)
-    location /api/ {
-        proxy_pass http://portfolio-backend:3003;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-    }
-}
-```
 
 ## Tech Stack
 
@@ -255,6 +227,5 @@ server_name portfolio.brontechsolutions.ch;
 -  shadcn-ui
 
 ## TODOs
-
--  implement dynamic server for local postgres queries and optimization of static content serving
+NA
 

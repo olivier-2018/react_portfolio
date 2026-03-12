@@ -40,3 +40,4 @@ coverage
 *.obsolete
 *.obsolete.*
 supabase_data/
+postgres_data/
